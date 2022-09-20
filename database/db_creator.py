@@ -42,9 +42,11 @@ class PostgresHandler:
 
     def _create_engine(self):
 
-        self.engine = create_engine(
-            self.url, pool_size=self.pool_size, pool_pre_ping=True, pool_recycle=300, echo=False,
-            isolation_level="READ UNCOMMITTED")
+        # self.engine = create_engine(
+        #     self.url, pool_size=self.pool_size, pool_pre_ping=True, pool_recycle=300, echo=False,
+        #     isolation_level="READ UNCOMMITTED")
+        self.engine = create_engine(f'postgresql://{self.__username}:{self.__password}@{self.host}:{self.port}/'
+                                    f'{self.database_name}')
         self.db_session = scoped_session(
             sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         )

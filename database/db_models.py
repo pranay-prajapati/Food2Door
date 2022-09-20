@@ -13,6 +13,10 @@ handler = PostgresHandler(
 
 
 def create_model():
+
+    print("Initializing.....")
     handler.initialize_db()
+
+    from models.user_model import User
 
     handler.Base.metadata.create_all(bind=handler.engine)
