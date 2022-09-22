@@ -4,7 +4,7 @@ from sqlalchemy import (
     String,
     Boolean,
     ForeignKey,
-    VARBINARY,
+    LargeBinary,
     Enum,
 
 )
@@ -24,7 +24,7 @@ class User(DatetimeMixin, handler.Base):
     city = Column(String(64))
     state = Column(String(64))
     zip_code = Column(String(6))
-    password_hash = Column(VARBINARY(64))
+    password_hash = Column(LargeBinary(64))
     is_owner = Column(Boolean, server_default=expression.false())
     is_delivery_agent = Column(Boolean, server_default=expression.false())
 
@@ -87,7 +87,7 @@ class Restaurant(DatetimeMixin, handler.Base):
     # operational_hours = Column(Enum(EstablishmentType))
 
     def __repr__(self):
-        return '<DeliveryAgent %r>' % self.restaurant_id
+        return '<Restaurant %r>' % self.restaurant_id
 
     def to_json(self):
         return {
