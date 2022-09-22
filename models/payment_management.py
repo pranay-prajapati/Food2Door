@@ -18,7 +18,6 @@ class Order(DatetimeMixin, handler.Base):
         Integer, primary_key=True, unique=True, autoincrement=True
     )
     restaurant_id_fk = Column(Integer, ForeignKey("restaurant.restaurant_id"))
-    # delivery_agent = Column(DeliveryAgent)
     agent_id_fk = Column(Integer, ForeignKey("delivery_agent.agent_id"))
     user_id_fk = Column(Integer, ForeignKey("order.order_id"))
     order_status = Column(Enum(OrderStatus))
