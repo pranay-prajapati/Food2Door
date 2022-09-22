@@ -18,5 +18,6 @@ def create_model():
     handler.initialize_db()
 
     from models.user_model import User
+    from models import payment_management
 
     handler.Base.metadata.create_all(bind=handler.engine)

@@ -8,9 +8,7 @@ class DatetimeMixin(object):
     common mixin class for datetime
     """
     created_at = Column(TIMESTAMP, server_default=func.now())
-    updated_at = Column(
-        TIMESTAMP, server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    )
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.current_timestamp())
 
 
 class VehicleType(enum.Enum):
