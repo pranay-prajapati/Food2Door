@@ -6,7 +6,7 @@ from sqlalchemy import (
     Enum,
     DateTime
 )
-from common_models import DatetimeMixin, OrderStatus, PaymentMode
+from models.common_models import DatetimeMixin, OrderStatus, PaymentMode
 from database.db_models import handler
 
 
