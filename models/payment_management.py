@@ -2,13 +2,11 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    Boolean,
     ForeignKey,
-    JSON,
     Enum,
     DateTime
 )
-from common_models import DatetimeMixin, OrderStatus, PaymentMode
+from models.common_models import DatetimeMixin, OrderStatus, PaymentMode
 from database.db_models import handler
 
 
@@ -19,7 +17,7 @@ class Order(DatetimeMixin, handler.Base):
     )
     restaurant_id_fk = Column(Integer, ForeignKey("restaurant.restaurant_id"))
     agent_id_fk = Column(Integer, ForeignKey("delivery_agent.agent_id"))
-    user_id_fk = Column(Integer, ForeignKey("order.order_id"))
+    user_id_fk = Column(Integer, ForeignKey("user.user_id"))
     order_status = Column(Enum(OrderStatus))
     pickup_time = Column(DateTime)
     delivery_time = Column(DateTime)

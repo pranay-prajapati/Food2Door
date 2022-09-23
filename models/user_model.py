@@ -12,7 +12,7 @@ from sqlalchemy import (
 from sqlalchemy.sql import expression
 # from database.db_creator import PostgresHandler
 from database.db_models import handler
-from common_models import DatetimeMixin, VehicleType, JobType, EstablishmentType, OutletType
+from models.common_models import DatetimeMixin, VehicleType, JobType, EstablishmentType, OutletType
 
 
 class User(DatetimeMixin, handler.Base):
