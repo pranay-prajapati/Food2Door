@@ -8,6 +8,7 @@ from sqlalchemy import (
 )
 from models.common_models import DatetimeMixin, OrderStatus, PaymentMode
 from database.db_models import handler
+from sqlalchemy.orm import relationship
 
 
 class Order(DatetimeMixin, handler.Base):
@@ -15,13 +16,15 @@ class Order(DatetimeMixin, handler.Base):
     order_id = Column(
         Integer, primary_key=True, unique=True, autoincrement=True
     )
-    restaurant_id_fk = Column(Integer, ForeignKey("restaurant.restaurant_id"))
     agent_id_fk = Column(Integer, ForeignKey("delivery_agent.agent_id"))
     user_id_fk = Column(Integer, ForeignKey("user.user_id"))
     order_status = Column(Enum(OrderStatus))
     pickup_time = Column(DateTime)
     delivery_time = Column(DateTime)
     quantity = Column(String(64))
+    menu = relationship("Menu")
+
+
 
     def __repr__(self):
         return '<Order %r>' % self.order_id
@@ -47,6 +50,7 @@ class Payment(DatetimeMixin, handler.Base):
     credit_card_number = Column(String(16), nullable=False)
     debit_card_number = Column(String(16), nullable=False)
     payment_mode = Column(Enum(PaymentMode))
+    user = relationship("User")
 
     def __repr__(self):
         return '<Payment %r>' % self.payment_id
