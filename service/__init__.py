@@ -4,9 +4,11 @@ from service.user.routes import user_management_route
 
 def create_app():
 
-    from user.routes import user_management_route
-
     app = Flask(__name__)
+
+    import os
+    secret_key = os.urandom(32)
+    app.config['SECRET_KEY'] = secret_key
 
     # register blueprint
     app.register_blueprint(user_management_route,

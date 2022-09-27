@@ -15,7 +15,6 @@ class EmailForm(FlaskForm):
 class SignupForm(EmailForm):
     name = StringField(validators=[DataRequired()])
     contact_number = StringField(validators=[DataRequired()])
-    email = StringField(validators=[DataRequired()])
     address = StringField(validators=[DataRequired()])
     city = StringField(validators=[DataRequired()])
     state = StringField(validators=[DataRequired()])

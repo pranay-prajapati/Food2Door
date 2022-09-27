@@ -3,6 +3,7 @@ from database.db_models import handler
 
 db_session = handler.db_session
 
+
 class UserRepo:
 
     @staticmethod
@@ -10,3 +11,10 @@ class UserRepo:
 
         user = User.query.filter_by(email=email).first()
         return user
+
+    # @staticmethod
+    # def update_by(email, data):
+    #     user_data = User.query.filter(
+    #         User.email == email).update(data)
+    #     handler.db_session.commit()
+    #     return user_data
