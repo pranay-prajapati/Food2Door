@@ -5,6 +5,9 @@ from wtforms.validators import DataRequired, Email
 from validators.custom_validators import PasswordValidator
 
 
+wtforms_json.init()
+
+
 class EmailForm(FlaskForm):
     email = StringField(validators=[DataRequired(), Email()])
 
