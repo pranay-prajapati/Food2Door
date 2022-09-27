@@ -3,7 +3,7 @@ import os
 from database import db_models
 import pathlib
 
-absolute_path = str(pathlib.Path(__file__).parent.absolute()) + "/database/alembic.ini"
+absolute_path = str(pathlib.Path(__file__).parent.absolute()) + "/alembic.ini"
 
 app = Flask(__name__)
 db_models.create_model()

@@ -83,7 +83,8 @@ class Restaurant(DatetimeMixin, handler.Base):
     gst_number = Column(String(24), nullable=False)
     establishment_type = Column(Enum(EstablishmentType))
     outlet_type = Column(Enum(OutletType))
-    is_closed = Column(Boolean,server_default=expression.false())
+    is_closed = Column(Boolean, server_default=expression.false())
+
     # need to be added
     # cuisine_type = Column(Enum(EstablishmentType))
     # operational_hours = Column(Enum(EstablishmentType))
