@@ -32,7 +32,7 @@ class Order(DatetimeMixin, handler.Base):
     def to_json(self):
         return {
             'order_id': self.order_id,
-            'restaurant_id_fk': self.restaurant_id_fk,
+            # 'restaurant_id_fk': self.restaurant_id_fk,
             'agent_id_fk': self.agent_id_fk,
             'user_id_fk': self.user_id_fk,
             'order_status': self.order_status,
