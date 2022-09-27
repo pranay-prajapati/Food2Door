@@ -4,7 +4,6 @@ from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired, Email
 from validators.custom_validators import PasswordValidator
 
-
 wtforms_json.init()
 
 
@@ -20,5 +19,5 @@ class SignupForm(EmailForm):
     state = StringField(validators=[DataRequired()])
     password = StringField(validators=[DataRequired(), PasswordValidator()])
     zip_code = StringField(validators=[DataRequired()])
-    # is_owner = BooleanField(validators=[DataRequired()])
-    # is_delivery_agent =  BooleanField(validators=[DataRequired()])
+    is_owner = BooleanField(validators=[DataRequired()])
+    is_delivery_agent = BooleanField(validators=[DataRequired()])

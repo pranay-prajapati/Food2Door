@@ -1,4 +1,4 @@
-from constants.constant import DEFAULT_HTTP_ERROR_MESSAGE, DEFAULT_ERROR_CODE, DEFAULT_HTTP_ERROR_CODE
+from common.constant import DEFAULT_HTTP_ERROR_MESSAGE, DEFAULT_ERROR_CODE, DEFAULT_HTTP_ERROR_CODE
 
 
 class HttpException(Exception):

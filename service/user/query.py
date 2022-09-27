@@ -12,9 +12,9 @@ class UserRepo:
         user = User.query.filter_by(email=email).first()
         return user
 
-    # @staticmethod
-    # def update_by(email, data):
-    #     user_data = User.query.filter(
-    #         User.email == email).update(data)
-    #     handler.db_session.commit()
-    #     return user_data
+    @staticmethod
+    def update_by(email, data):
+        user_data = User.query.filter(
+            User.email == email).update(data)
+        handler.db_session.commit()
+        return user_data

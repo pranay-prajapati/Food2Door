@@ -16,3 +16,6 @@ ENTITY_CREATED = 201
 
 # form data messages
 INVALID_FORM_MESSAGE = "Invalid form fields. Please check again the data you have entered."
+
+# encodings
+UTF_ENCODING = "utf-8"
