@@ -16,5 +16,20 @@ class UserRepo:
     def update_by(email, data):
         user_data = User.query.filter(
             User.email == email).update(data)
-        handler.db_session.commit()
+        if user_data:
+            handler.db_session.commit()
         return user_data
+
+    @staticmethod
+    def create_user(data):
+        users = []
+
+        for user_data in data:
+            users.append(User(**user_data))
+        db_session.add_all(users)
+        db_session.commit()
+        db_session.flush()
+        # users = User(**data)
+        # db_session.add(users)
+        # db_session.commit()
+        # return users
