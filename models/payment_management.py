@@ -22,9 +22,8 @@ class Order(DatetimeMixin, handler.Base):
     pickup_time = Column(DateTime)
     delivery_time = Column(DateTime)
     quantity = Column(String(64))
-    menu = relationship("Menu")
 
-
+    # menu = relationship("Menu")
 
     def __repr__(self):
         return '<Order %r>' % self.order_id
@@ -50,7 +49,8 @@ class Payment(DatetimeMixin, handler.Base):
     credit_card_number = Column(String(16), nullable=False)
     debit_card_number = Column(String(16), nullable=False)
     payment_mode = Column(Enum(PaymentMode))
-    user = relationship("User")
+
+    # user = relationship("User")
 
     def __repr__(self):
         return '<Payment %r>' % self.payment_id

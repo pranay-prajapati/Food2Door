@@ -2,11 +2,13 @@ from flask import Flask
 import os
 from database import db_models
 import pathlib
+from service import create_app
 
 absolute_path = str(pathlib.Path(__file__).parent.absolute()) + "/alembic.ini"
 
-app = Flask(__name__)
+# app = Flask(__name__)
 db_models.create_model()
+app = create_app()
 
 if __name__ == "__main__":
 
