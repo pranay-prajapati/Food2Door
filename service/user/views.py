@@ -11,8 +11,8 @@ class UserData:
 
     @staticmethod
     def user_signup(form):
-        # if not form.validate_on_submit():
-        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email)
@@ -33,10 +33,6 @@ class UserData:
             'is_owner': form.is_owner.data,
             'is_delivery_agent': form.is_delivery_agent.data,
         }
-        user = user_data.append(data)
-        print("csdsd", user)
+        user_data.append(data)
         UserRepo.create_user(user_data)
-        return {'message': 'success'}
-        # check if user exists
-        #
-        # create user
+        return {'message': 'success', 'data': {k: v for k, v in data.items() if k != 'password_hash'}}

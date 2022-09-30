@@ -29,7 +29,3 @@ class UserRepo:
         db_session.add_all(users)
         db_session.commit()
         db_session.flush()
-        # users = User(**data)
-        # db_session.add(users)
-        # db_session.commit()
-        # return users
