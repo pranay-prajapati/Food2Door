@@ -21,3 +21,7 @@ class SignupForm(EmailForm):
     zip_code = StringField(validators=[DataRequired()])
     is_owner = BooleanField(validators=[DataRequired()])
     is_delivery_agent = BooleanField(validators=[DataRequired()])
+
+
+class LoginForm(EmailForm):
+    password = StringField(validators=[DataRequired()])

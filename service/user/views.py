@@ -16,6 +16,8 @@ class UserData:
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email)
+
+        # check if user exists
         if user:
             return jsonify('User already exist', 403)
 
@@ -33,10 +35,25 @@ class UserData:
             'is_owner': form.is_owner.data,
             'is_delivery_agent': form.is_delivery_agent.data,
         }
-        user = user_data.append(data)
-        print("csdsd", user)
+        user_data.append(data)
         UserRepo.create_user(user_data)
         return {'message': 'success'}
-        # check if user exists
+
         #
         # create user
+
+    @staticmethod
+    def user_login(form):
+        email = form.email.data
+        password = form.password.data
+
+        user = UserRepo.get_user_details(email=email)
+        if not user:
+            return jsonify('User does not exist', 403)
+        entered_password_hash = generate_password_hash(
+            password).encode("utf-8")
+        if entered_password_hash != user.password_hash:
+            return jsonify('Incorrect password', 403)
+        return {'message': 'login success'}
+
+
