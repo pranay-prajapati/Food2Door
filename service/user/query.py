@@ -1,4 +1,4 @@
-from models.user_model import User
+from models.user_model import User, Restaurant
 from database.db_models import handler
 
 db_session = handler.db_session
@@ -13,6 +13,12 @@ class UserRepo:
         return user
 
     @staticmethod
+    def get_owner_details(fssai_number):
+
+        user = Restaurant.query.filter_by(fssai_number=fssai_number).first()
+        return user
+
+    @staticmethod
     def update_by(email, data):
         user_data = User.query.filter(
             User.email == email).update(data)
@@ -22,10 +28,20 @@ class UserRepo:
 
     @staticmethod
     def create_user(data):
-        users = []
-
+        users = list()
         for user_data in data:
             users.append(User(**user_data))
         db_session.add_all(users)
         db_session.commit()
         db_session.flush()
+
+    @staticmethod
+    def create_owner(data):
+        owner = list()
+        for owner_data in data:
+            owner.append(Restaurant(**owner_data))
+        db_session.add_all(owner)
+        db_session.commit()
+        db_session.flush()
+
+    # @staticmethod
