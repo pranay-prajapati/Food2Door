@@ -19,11 +19,11 @@ def owner_signup():
     return response
 
 
-# @user_management_route.route("/signup/delivery-agent", methods=["PUT"])
-# def delivery_agent_signup():
-#     form = AgentSignupForm()
-#     response = UserData.delivery_agent(form)
-#     return response
+@user_management_route.route("/signup/delivery-agent", methods=["PUT"])
+def delivery_agent_signup():
+    form = AgentSignupForm()
+    response = UserData.delivery_agent(form)
+    return response
 
 
 @user_management_route.route("/login", methods=["POST"])

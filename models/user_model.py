@@ -98,8 +98,10 @@ class Restaurant(DatetimeMixin, handler.Base):
         return {
             'restaurant_id': self.restaurant_id,
             'user_id_fk': self.user_id_fk,
+            'agent_id_fk': self.agent_id_fk,
             'restaurant_name': self.restaurant_name,
             'restaurant_address': self.restaurant_address,
+            'restaurant_email': self.restaurant_email,
             'restaurant_contact': self.restaurant_contact,
             'fssai_number': self.fssai_number,
             'gst_number': self.gst_number,

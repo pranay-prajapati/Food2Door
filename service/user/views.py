@@ -60,11 +60,13 @@ class UserData:
 
     @staticmethod
     def owner_user(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         owner_data = list()
+        restaurant_email = form.email.data
         fssai_number = form.fssai_number.data
-        owner = UserRepo.get_owner_details(fssai_number)
+
+        owner = UserRepo.get_owner_details(fssai_number, restaurant_email)
         # check if user exists
         if owner:
             return jsonify('User already exist', 403)
@@ -73,7 +75,7 @@ class UserData:
             'restaurant_name': form.restaurant_name.data,
             'restaurant_address': form.restaurant_address.data,
             'restaurant_contact': form.restaurant_contact.data,
-            'restaurant_email': form.email.data,
+            'restaurant_email': restaurant_email,
             'fssai_number': fssai_number,
             'gst_number': form.gst_number.data,
             'establishment_type': form.establishment_type.data,
@@ -84,3 +86,27 @@ class UserData:
         UserRepo.create_owner(owner_data)
 
         return {'message': 'Owner details logged in successfully', 'data': data}
+
+    @staticmethod
+    def delivery_agent(form):
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        agent_data = list()
+        aadhar_card_number = form.aadhar_card_number.data
+
+        agent = UserRepo.get_agent_details(aadhar_card_number)
+        # check if user exists
+        if agent:
+            return jsonify('User already exist', 403)
+
+        data = {
+            'vehicle_type': form.vehicle_type.data,
+            'driving_licence_number': form.driving_licence_number.data,
+            'aadhar_card_number': aadhar_card_number,
+            'vehicle_number': form.vehicle_number.data,
+            'job_type': form.job_type.data
+        }
+        agent_data.append(data)
+        UserRepo.create_agent(agent_data)
+
+        return {'message': 'Agent details logged in successfully', 'data': data}
