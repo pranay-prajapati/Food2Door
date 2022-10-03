@@ -8,6 +8,8 @@ from common.password_converter import generate_password_hash
 
 app = Flask(__name__)
 app.config["WTF_CSRF_ENABLED"] = False
+
+
 class UserData:
 
     @staticmethod
@@ -62,7 +64,7 @@ class UserData:
             raise HttpException(INVALID_FORM_MESSAGE, 400)
         owner_data = list()
         fssai_number = form.fssai_number.data
-        owner = UserRepo.get_user_details(fssai_number)
+        owner = UserRepo.get_owner_details(fssai_number)
         # check if user exists
         if owner:
             return jsonify('User already exist', 403)
@@ -71,10 +73,12 @@ class UserData:
             'restaurant_name': form.restaurant_name.data,
             'restaurant_address': form.restaurant_address.data,
             'restaurant_contact': form.restaurant_contact.data,
+            'restaurant_email': form.email.data,
             'fssai_number': fssai_number,
             'gst_number': form.gst_number.data,
             'establishment_type': form.establishment_type.data,
             'outlet_type': form.outlet_type.data,
+
         }
         owner_data.append(data)
         UserRepo.create_owner(owner_data)

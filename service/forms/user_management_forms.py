@@ -29,7 +29,7 @@ class OwnerSignupForm(EmailForm):
     restaurant_contact = StringField(validators=[DataRequired()])
     fssai_number = StringField(validators=[DataRequired()])
     gst_number = StringField(validators=[DataRequired()])
-    establishment_type = StringField(validators=[DataRequired(), PasswordValidator()])
+    establishment_type = StringField(validators=[DataRequired()])
     outlet_type = StringField(validators=[DataRequired()])
 
 
@@ -39,7 +39,6 @@ class AgentSignupForm(EmailForm):
     aadhar_card_number = StringField(validators=[DataRequired()])
     vehicle_number = StringField(validators=[DataRequired()])
     job_type = StringField(validators=[DataRequired()])
-
 
 
 class LoginForm(EmailForm):
