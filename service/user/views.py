@@ -66,7 +66,7 @@ class UserData:
         restaurant_email = form.email.data
         fssai_number = form.fssai_number.data
 
-        owner = UserRepo.get_owner_details(fssai_number, restaurant_email)
+        owner = UserRepo.get_owner_details(fssai_number)
         # check if user exists
         if owner:
             return jsonify('User already exist', 403)

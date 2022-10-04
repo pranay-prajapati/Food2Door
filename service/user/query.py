@@ -13,8 +13,8 @@ class UserRepo:
         return user
 
     @staticmethod
-    def get_owner_details(fssai_number, email):
-        user = Restaurant.query.filter_by(fssai_number=fssai_number, restaurant_email=email).first()
+    def get_owner_details(fssai_number):
+        user = Restaurant.query.filter_by(fssai_number=fssai_number).first()
         return user
 
     @staticmethod
