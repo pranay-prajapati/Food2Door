@@ -76,9 +76,11 @@ class Restaurant(DatetimeMixin, handler.Base):
     __tablename__ = 'restaurant'
     restaurant_id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+    agent_id_fk = Column(Integer, ForeignKey("delivery_agent.agent_id"))
     restaurant_name = Column(String(100), nullable=False)
     restaurant_address = Column(String(50), nullable=False)
     restaurant_contact = Column(String(10), nullable=False)
+    restaurant_email = Column(String(120), unique=True, nullable=False)
     fssai_number = Column(String(14), nullable=False)
     gst_number = Column(String(24), nullable=False)
     establishment_type = Column(Enum(EstablishmentType))
@@ -96,8 +98,10 @@ class Restaurant(DatetimeMixin, handler.Base):
         return {
             'restaurant_id': self.restaurant_id,
             'user_id_fk': self.user_id_fk,
+            'agent_id_fk': self.agent_id_fk,
             'restaurant_name': self.restaurant_name,
             'restaurant_address': self.restaurant_address,
+            'restaurant_email': self.restaurant_email,
             'restaurant_contact': self.restaurant_contact,
             'fssai_number': self.fssai_number,
             'gst_number': self.gst_number,

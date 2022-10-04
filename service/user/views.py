@@ -1,10 +1,13 @@
 from common.constant import INVALID_FORM_MESSAGE
 from exception.http_exception import HttpException
 from service.user.query import UserRepo
-from flask import jsonify
+from flask import jsonify, Flask
 from common import constant
 from models.user_model import User
 from common.password_converter import generate_password_hash
+
+app = Flask(__name__)
+app.config["WTF_CSRF_ENABLED"] = False
 
 
 class UserData:
@@ -16,12 +19,14 @@ class UserData:
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email)
+
+        # check if user exists
         if user:
             return jsonify('User already exist', 403)
 
         data = {
             'name': form.name.data,
-            'email': form.email.data,
+            'email': email,
             'contact_number': form.contact_number.data,
             'address': form.address.data,
             'city': form.city.data,
@@ -35,4 +40,75 @@ class UserData:
         }
         user_data.append(data)
         UserRepo.create_user(user_data)
+        # if data.get('is_owner'):
+        #     UserData.owner_user()
         return {'message': 'success', 'data': {k: v for k, v in data.items() if k != 'password_hash'}}
+
+    @staticmethod
+    def user_login(form):
+        email = form.email.data
+        password = form.password.data
+
+        user = UserRepo.get_user_details(email=email)
+        if not user:
+            return jsonify('User does not exist', 403)
+        entered_password_hash = generate_password_hash(
+            password).encode("utf-8")
+        if entered_password_hash != user.password_hash:
+            return jsonify('Incorrect password', 403)
+        return {'message': 'login success'}
+
+    @staticmethod
+    def owner_user(form):
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        owner_data = list()
+        restaurant_email = form.email.data
+        fssai_number = form.fssai_number.data
+
+        owner = UserRepo.get_owner_details(fssai_number)
+        # check if user exists
+        if owner:
+            return jsonify('User already exist', 403)
+
+        data = {
+            'restaurant_name': form.restaurant_name.data,
+            'restaurant_address': form.restaurant_address.data,
+            'restaurant_contact': form.restaurant_contact.data,
+            'restaurant_email': restaurant_email,
+            'fssai_number': fssai_number,
+            'gst_number': form.gst_number.data,
+            'establishment_type': form.establishment_type.data,
+            'outlet_type': form.outlet_type.data,
+            'is_owner': True
+
+        }
+        owner_data.append(data)
+        UserRepo.create_user(owner_data, data.get('is_owner'))
+
+        return {'message': 'Owner details logged in successfully', 'data': data}
+
+    @staticmethod
+    def delivery_agent(form):
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        agent_data = list()
+        aadhar_card_number = form.aadhar_card_number.data
+
+        agent = UserRepo.get_agent_details(aadhar_card_number)
+        # check if user exists
+        if agent:
+            return jsonify('User already exist', 403)
+
+        data = {
+            'vehicle_type': form.vehicle_type.data,
+            'driving_licence_number': form.driving_licence_number.data,
+            'aadhar_card_number': aadhar_card_number,
+            'vehicle_number': form.vehicle_number.data,
+            'job_type': form.job_type.data,
+            'is_delivery_agent': True
+        }
+        agent_data.append(data)
+        UserRepo.create_user(agent_data, data.get('is_delivery_agent'))
+
+        return {'message': 'Agent details logged in successfully', 'data': data}
