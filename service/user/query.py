@@ -31,11 +31,24 @@ class UserRepo:
         return user_data
 
     @staticmethod
-    def create_user(data):
+    def create_user(data, is_owner=None, is_delivery_agent=None):
         users = list()
-        for user_data in data:
-            users.append(User(**user_data))
-        db_session.add_all(users)
+        owner = list()
+        agent = list()
+
+        if is_owner:
+            for owner_data in data:
+                owner.append(Restaurant(**owner_data))
+            db_session.add_all(owner)
+        if is_delivery_agent:
+            for agent_data in data:
+                agent.append(DeliveryAgent(**agent_data))
+            db_session.add_all(agent)
+        else:
+            for user_data in data:
+                users.append(User(**user_data))
+            db_session.add_all(users)
+
         db_session.commit()
         db_session.flush()
 
@@ -54,5 +67,6 @@ class UserRepo:
         for agent_data in data:
             agent.append(DeliveryAgent(**agent_data))
         db_session.add_all(agent)
+
         db_session.commit()
         db_session.flush()

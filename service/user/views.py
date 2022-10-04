@@ -80,10 +80,11 @@ class UserData:
             'gst_number': form.gst_number.data,
             'establishment_type': form.establishment_type.data,
             'outlet_type': form.outlet_type.data,
+            'is_owner': True
 
         }
         owner_data.append(data)
-        UserRepo.create_owner(owner_data)
+        UserRepo.create_user(owner_data, data.get('is_owner'))
 
         return {'message': 'Owner details logged in successfully', 'data': data}
 
@@ -104,9 +105,10 @@ class UserData:
             'driving_licence_number': form.driving_licence_number.data,
             'aadhar_card_number': aadhar_card_number,
             'vehicle_number': form.vehicle_number.data,
-            'job_type': form.job_type.data
+            'job_type': form.job_type.data,
+            'is_delivery_agent': True
         }
         agent_data.append(data)
-        UserRepo.create_agent(agent_data)
+        UserRepo.create_user(agent_data, data.get('is_delivery_agent'))
 
         return {'message': 'Agent details logged in successfully', 'data': data}
