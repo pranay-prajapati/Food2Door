@@ -20,15 +20,17 @@ class VehicleType(enum.Enum):
 
 
 class PartTime(enum.Enum):
-    morning = "Morning"
-    evening = "Evening"
+    morning = "Part_time_Morning"
+    evening = "Part_time_Evening"
 
 
 class JobType(enum.Enum):
     """
     Job Type
     """
-    part_time = PartTime
+    part_time = "Part-Time"
+    morning = "Part-Time_Morning"
+    evening = "Part-Time_Evening"
     full_time = "Full-Time"
 
 
