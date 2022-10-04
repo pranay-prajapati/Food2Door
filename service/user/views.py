@@ -5,6 +5,9 @@ from flask import jsonify, Flask
 from common import constant
 from models.user_model import User
 from common.password_converter import generate_password_hash
+from common.jwt_token import generate_jwt_token
+from common import constant
+from common.session import get_current_user_id
 
 app = Flask(__name__)
 app.config["WTF_CSRF_ENABLED"] = False
@@ -14,8 +17,8 @@ class UserData:
 
     @staticmethod
     def user_signup(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email)
@@ -23,6 +26,9 @@ class UserData:
         # check if user exists
         if user:
             return jsonify('User already exist', 403)
+
+        token = generate_jwt_token(
+            email, constant.TEMPORARY_JWT_EXP_TIME_MINS)
 
         data = {
             'name': form.name.data,
@@ -42,7 +48,15 @@ class UserData:
         UserRepo.create_user(user_data)
         # if data.get('is_owner'):
         #     UserData.owner_user()
-        return {'message': 'success', 'data': {k: v for k, v in data.items() if k != 'password_hash'}}
+        return jsonify(
+            {'message': 'success',
+             "jwt_token": {
+                 "token": token.decode("utf-8"),
+                 "exp_time_in_minutes": constant.TEMPORARY_JWT_EXP_TIME_MINS,
+             },
+             'data': {k: v for k, v in data.items() if k != 'password_hash'},
+
+             })
 
     @staticmethod
     def user_login(form):
@@ -52,11 +66,21 @@ class UserData:
         user = UserRepo.get_user_details(email=email)
         if not user:
             return jsonify('User does not exist', 403)
+        token = generate_jwt_token(
+            email, constant.TEMPORARY_JWT_EXP_TIME_MINS)
+        user_id = get_current_user_id()
         entered_password_hash = generate_password_hash(
             password).encode("utf-8")
         if entered_password_hash != user.password_hash:
             return jsonify('Incorrect password', 403)
-        return {'message': 'login success'}
+        response_payload = {
+            "jwt_token": {
+                "token": token.decode("utf-8"),
+                "exp_time_in_minutes": constant.
+                TEMPORARY_JWT_EXP_TIME_MINS,
+            }
+        }
+        return {'message': 'login success', 'token': response_payload}
 
     @staticmethod
     def owner_user(form):

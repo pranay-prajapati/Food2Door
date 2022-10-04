@@ -19,3 +19,7 @@ INVALID_FORM_MESSAGE = "Invalid form fields. Please check again the data you hav
 
 # encodings
 UTF_ENCODING = "utf-8"
+
+JWT_ENCRYPTION_ALGO = "HS256"
+
+TEMPORARY_JWT_EXP_TIME_MINS = 60
