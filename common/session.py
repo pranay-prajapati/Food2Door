@@ -16,7 +16,9 @@ def get_session_data(session):
     """
     Extracting Session data from JWT payload
     """
+
     if "jwt_token" not in session.keys():
+        print("fdsgskjfdsglifsd", session.keys())
         raise HttpException(code=constant.BAD_REQUEST_CODE, http_code=401, message="User Not Logged In")
     jwt_token = session["jwt_token"]
     data = decode_jwt_token(jwt_token)

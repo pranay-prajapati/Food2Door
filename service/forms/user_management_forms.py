@@ -43,3 +43,7 @@ class AgentSignupForm(EmailForm):
 
 class LoginForm(EmailForm):
     password = StringField(validators=[DataRequired()])
+
+
+class VerifyCodeForm(EmailForm):
+    code = StringField(validators=[DataRequired()])

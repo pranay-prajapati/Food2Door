@@ -14,8 +14,15 @@ FORBIDDEN_CODE = 403
 ALREADY_REPORTED = 208
 ENTITY_CREATED = 201
 
+# custom status codes
+UNAUTHORISED = 4001
+
 # form data messages
 INVALID_FORM_MESSAGE = "Invalid form fields. Please check again the data you have entered."
+USER_DOES_NOT_EXIST = "User does not exist"
+NO_INVITATION = "No invitation"
+CODE_VERIFIED_SUCCESSFULLY = "Code Verified Successfully"
+INVALID_JWT_TOKEN = "Invalid JWT Token"
 
 # encodings
 UTF_ENCODING = "utf-8"
@@ -23,3 +30,5 @@ UTF_ENCODING = "utf-8"
 JWT_ENCRYPTION_ALGO = "HS256"
 
 TEMPORARY_JWT_EXP_TIME_MINS = 60
+MFA_TIME_INTERVAL = 600
+MFA_EXP_TIME_IN_SECONDS = 600

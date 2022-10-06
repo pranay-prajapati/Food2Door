@@ -26,6 +26,7 @@ class User(DatetimeMixin, handler.Base):
     state = Column(String(64))
     zip_code = Column(String(6))
     password_hash = Column(LargeBinary(64))
+    mfa_secret = Column(String(256))
     is_owner = Column(Boolean, server_default=expression.false())
     is_delivery_agent = Column(Boolean, server_default=expression.false())
 
