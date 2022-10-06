@@ -78,8 +78,6 @@ class UserData:
             return jsonify('User does not exist', 403)
         token = generate_jwt_token(
             email, constant.TEMPORARY_JWT_EXP_TIME_MINS)
-        # create_session(token)
-        # user_id = get_current_user_id()
         entered_password_hash = generate_password_hash(
             password).encode("utf-8")
         if entered_password_hash != user.password_hash:
@@ -181,7 +179,7 @@ class MFA:
         if decoded["email"] == user_data.email:
             totp = pyotp.TOTP(
                 mfa_secret, interval=constant.MFA_TIME_INTERVAL)
-            if totp.verify(mfa_code) or (not user_data.mfa_enabled):
+            if totp.verify(mfa_code):
                 jwt_payload = {
                     'email': user_data.email,
                     'name': user_data.name,

@@ -2,6 +2,7 @@ import jwt
 from common.config import Config
 from datetime import datetime, timedelta
 from common import constant
+from common.constant import UTF_ENCODING
 
 
 def generate_jwt_token(email, exp_time, **kwargs):
@@ -16,5 +17,7 @@ def generate_jwt_token(email, exp_time, **kwargs):
 
 
 def decode_jwt_token(token):
-    decoded = jwt.decode(token, Config.app_secret_key, algorithms=[constant.JWT_ENCRYPTION_ALGO])
+    # a = token.decode(UTF_ENCODING)
+    # c = Config.app_secret_key
+    decoded = jwt.decode(token, Config.app_secret_key, algorithms=[constant.JWT_ENCRYPTION_ALGO], options={"verify_signature": False})
     return decoded
