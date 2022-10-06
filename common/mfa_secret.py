@@ -18,11 +18,12 @@ def encrypt_mfa_secret(obj_str):
 
 def decrypt_mfa_secret(obj):
     """
-    Encryption of MFA secret key
+    Decryption of MFA secret key
     """
+
     key = Config.FERNET_KEY
     fernet = Fernet(key)
-    return fernet.decrypt(bytes(obj, UTF_ENCODING)).decode()
+    return fernet.decrypt(obj).decode(UTF_ENCODING)
 
 
 def send_mfa(mfa_secret):

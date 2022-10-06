@@ -1,7 +1,7 @@
 """Added mfa_secret column to User
 
 Revision ID: 0001
-Revises: 
+Revises:
 Create Date: 2022-10-04 15:44:05.353987
 
 """
@@ -17,9 +17,9 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('user', sa.Column('mfa_secret', sa.String))
-
+    # op.add_column('user', sa.Column('mfa_secret', sa.String))
+    pass
 
 def downgrade() -> None:
-    op.drop_column('user', sa.Column('mfa_secret', sa.String))
-
+    # op.drop_column('user', sa.Column('mfa_secret', sa.String))
+    pass
