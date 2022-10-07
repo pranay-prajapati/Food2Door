@@ -1,15 +1,13 @@
 import pyotp
-
+from query.role_query import RolesRepo
 from common.constant import INVALID_FORM_MESSAGE
 from common.mfa_secret import decrypt_mfa_secret, send_mfa, encrypt_mfa_secret
 from exception.http_exception import HttpException
-from service.user.query import UserRepo
+from service.user.query.user_query import UserRepo
 from flask import jsonify, Flask, request
-from common import constant
-from models.user_model import User
 from common.password_converter import generate_password_hash
 from common.jwt_token import generate_jwt_token, decode_jwt_token
-from common import constant
+from common import constant, role_constant
 from common.session import get_current_user_id, create_session
 
 app = Flask(__name__)
@@ -52,6 +50,8 @@ class UserData:
             'is_delivery_agent': form.is_delivery_agent.data,
             'mfa_secret': encrypt_mfa_secret(raw_mfa_secret),
         }
+        role_data = RolesRepo.get_role(role_constant.Roles.USER_PERMISSION)
+
         user_data.append(data)
         UserRepo.create_user(user_data)
 

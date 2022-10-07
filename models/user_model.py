@@ -4,11 +4,12 @@ from sqlalchemy import (
     String,
     Boolean,
     ForeignKey,
-    VARBINARY,
+    JSON,
     Enum,
     LargeBinary
 
 )
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression
 # from database.db_creator import PostgresHandler
 from database.db_models import handler
@@ -27,6 +28,7 @@ class User(DatetimeMixin, handler.Base):
     zip_code = Column(String(6))
     password_hash = Column(LargeBinary(64))
     mfa_secret = Column(LargeBinary(256))
+    user_roles = relationship("UserRoles", backref="user")
     is_owner = Column(Boolean, server_default=expression.false())
     is_delivery_agent = Column(Boolean, server_default=expression.false())
 
@@ -46,6 +48,46 @@ class User(DatetimeMixin, handler.Base):
             'is_owner': self.is_owner,
             'is_delivery_agent': self.is_delivery_agent
         }
+
+
+class UserRoles(DatetimeMixin, handler.Base):
+    """
+    SQL Alchemy Model for - User Roles
+    """
+
+    __tablename__ = "user_roles"
+    user_role_id = Column(
+        Integer, nullable=False, primary_key=True, unique=True, autoincrement=True
+    )
+    role_id_fk = Column(Integer, ForeignKey("roles.role_id"))
+    user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+
+    def __init__(self, **kwargs):
+        super(UserRoles, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<UserRoles %r>" % self.user_role_id
+
+
+class Roles(DatetimeMixin, handler.Base):
+    """
+    SQL Alchemy Model for - Roles
+    """
+
+    __tablename__ = "roles"
+    role_id = Column(
+        Integer, nullable=False, primary_key=True, unique=True, autoincrement=True
+    )
+    role_name = Column(String(64), nullable=False)
+    role_display_name = Column(String(64), nullable=False)
+    resources = Column(JSON)
+    user_roles = relationship("UserRoles", backref="roles")
+
+    def __init__(self, **kwargs):
+        super(Roles, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<Roles %r>" % self.role_name
 
 
 class DeliveryAgent(DatetimeMixin, handler.Base):
