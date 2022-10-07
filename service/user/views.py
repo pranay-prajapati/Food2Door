@@ -203,6 +203,7 @@ class MFA:
                         'name': user_data.name,
                         'contact_number': user_data.contact_number,
                         'address': user_data.address,
+                        'user_id': user_id
                     }
                 }
                 return jsonify(response, 200)
