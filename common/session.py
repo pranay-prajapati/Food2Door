@@ -29,3 +29,13 @@ def get_current_user_id():
     session_data = get_session_data(session)
     user_id = session_data["jwt_payload"]["user_id"]
     return user_id
+
+
+def get_current_user_permissions(session_data):
+    list_of_permissions = session_data["jwt_payload"]["role_permissions"]
+    compound_data = {
+        k: [d.get(k) for d in list_of_permissions]
+        for k in set().union(*list_of_permissions)
+    }
+    permissions = list(set(sum(compound_data["permissions"], [])))
+    return permissions

@@ -1,5 +1,7 @@
-from flask import Blueprint
-# from flask_user import ro
+from flask import Blueprint, session, jsonify
+
+from common.rbac import has_permission
+from common.role_constant import Roles
 from common.session import get_current_user_id
 from service.forms.user_management_forms import SignupForm, LoginForm, OwnerSignupForm, AgentSignupForm, VerifyCodeForm
 from service.user.views import UserData, MFA
@@ -36,6 +38,7 @@ def login():
 
 
 @user_management_route.route("/get-user", methods=["GET"])
+@has_permission(permissions=Roles.USER_PERMISSION)
 def get_user():
     user_id = get_current_user_id()
     return user_id
@@ -46,3 +49,9 @@ def verify_mfa():
     form = VerifyCodeForm()
     response = MFA.verify_mfa(form)
     return response
+
+
+@user_management_route.route("/logout", methods=["GET"])
+def logout():
+    session.clear()
+    return jsonify(message="User Logged Out")

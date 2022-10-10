@@ -49,3 +49,16 @@ class Roles:
     ]
 
 
+class RoleType:
+    ADMIN = "admin"
+    USER = "user"
+    DELIVERY_AGENT = "delivery_agent"
+    RESTAURANT_OWNER = "restaurant_owner"
+
+
+ROLE_NAMES = [
+    RoleType.ADMIN,
+    RoleType.USER,
+    RoleType.DELIVERY_AGENT,
+    RoleType.RESTAURANT_OWNER
+]

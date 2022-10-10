@@ -11,7 +11,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression
-# from database.db_creator import PostgresHandler
 from database.db_models import handler
 from models.common_models import DatetimeMixin, VehicleType, JobType, EstablishmentType, OutletType
 
