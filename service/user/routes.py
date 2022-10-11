@@ -17,6 +17,7 @@ def signup():
 
 
 @user_management_route.route("/signup/owner", methods=["PUT"])
+@has_permission(permissions=Roles.RESTAURANT_PERMISSION)
 def owner_signup():
     form = OwnerSignupForm()
     response = UserData.owner_user(form)
