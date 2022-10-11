@@ -11,6 +11,7 @@ from common.password_converter import generate_password_hash
 from common.jwt_token import generate_jwt_token, decode_jwt_token
 from common import constant
 from common.session import get_current_user_id, create_session
+from email_service.email_config import SimpleMailProvider
 
 app = Flask(__name__)
 app.config["WTF_CSRF_ENABLED"] = False
@@ -52,12 +53,17 @@ class UserData:
             'is_delivery_agent': form.is_delivery_agent.data,
             'mfa_secret': encrypt_mfa_secret(raw_mfa_secret),
         }
+        # role_data = RolesRepo.get_role(role_constant.Roles.USER_PERMISSION)
+
         user_data.append(data)
-        UserRepo.create_user(user_data)
+        # UserRepo.create_user(user_data)
 
         # if data.get('is_owner'):
         #     UserData.owner_user()
-        data = {key: data[key] for key in data if key not in ['password_hash','mfa_secret']}
+        data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
+        user = UserRepo.get_user_details(email)
+        SimpleMailProvider.send_mail("Hello", ['devansh.v@zymr.com'], username="Devansh", body="abcacbabcabckab",
+                                     filename='templates/welcome_user.html')
         return jsonify(
             {'message': 'success',
              "jwt_token": {
@@ -176,12 +182,12 @@ class MFA:
         token = token.encode(constant.UTF_ENCODING)
         decoded = decode_jwt_token(token)
 
-        if decoded["email"] == user_data.email:
+        if decoded["email_service"] == user_data.email:
             totp = pyotp.TOTP(
                 mfa_secret, interval=constant.MFA_TIME_INTERVAL)
             if totp.verify(mfa_code):
                 jwt_payload = {
-                    'email': user_data.email,
+                    'email_service': user_data.email,
                     'name': user_data.name,
                     'contact_number': user_data.contact_number,
                     'address': user_data.address,
@@ -199,7 +205,7 @@ class MFA:
                     "code": constant.SUCCESS_CODE,
                     "message": constant.CODE_VERIFIED_SUCCESSFULLY,
                     "user_data": {
-                        'email': user_data.email,
+                        'email_service': user_data.email,
                         'name': user_data.name,
                         'contact_number': user_data.contact_number,
                         'address': user_data.address,
