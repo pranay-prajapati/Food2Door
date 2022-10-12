@@ -10,6 +10,7 @@ from flask import Flask, current_app, render_template
 from flask_mail import Mail, Message
 import pathlib
 import jinja2
+from email_service.utility import utils
 
 absolute_path = (pathlib.Path(__file__).parent.absolute())
 # msg = MIMEMultipart()
@@ -33,22 +34,28 @@ class EmailConfig:
     # sender_name = os.getenv("SENDER_NAME", "Devansh")
 
 
-class MailProvider(ABC):
-    @abstractmethod
-    def send_email(
-            self,
-            message_id: str,
-            addressee: str,
-            subject: str,
-            html_body: str,
-            attachment_param: dict,
-            body: str,
-            cc_addressee: str = None):
-        raise NotImplementedError("Trying to call abstract method")
+# class MailProvider(ABC):
+#     @abstractmethod
+#     def send_email(
+#             self,
+#             message_id: str,
+#             addressee: str,
+#             subject: str,
+#             html_body: str,
+#             attachment_param: dict,
+#             body: str,
+#             cc_addressee: str = None):
+#         raise NotImplementedError("Trying to call abstract method")
 
 
-class SimpleMailProvider(MailProvider):
+class SimpleMailProvider():
     def __init__(self):
+        # self.provider = provider
+        absolute_path = pathlib.Path(__file__).parent.parent.absolute()
+        template_path = str(absolute_path) + "/templates"
+
+        template_loader = jinja2.FileSystemLoader(searchpath=template_path)
+        self.jinja_env = jinja2.Environment(loader=template_loader, autoescape=True)
         if EmailConfig and EmailConfig.MAIL_PASSWORD and EmailConfig.MAIL_SERVER:
             print('Initialized the Simple Mail Provider')
         else:
@@ -131,30 +138,44 @@ class SimpleMailProvider(MailProvider):
     #     return mail_sent
     @staticmethod
     def send_mail(
-                  subject: str,
-                  receiver: list,
-                  username: str = None,
-                  attachment_param: dict = None,
-                  html_body: str = None,
-                  filename=None,
-                  body: str = "For legacy purposes only. If you see this - something went wrong.",
-                  cc_addresses: str = None,
-                  bcc_addresses: str = None):
+            subject: str,
+            receiver: list,
+            username: str = None,
+            attachment_param: dict = None,
+            html_body: str = None,
+            filename=None,
+            body: str = "For legacy purposes only. If you see this - something went wrong.",
+            cc_addresses: str = None,
+            bcc_addresses: str = None):
 
+        absolute_path = pathlib.Path(__file__).parent.absolute()
+        template_path = str(absolute_path) + "/templates"
+
+        template_loader = jinja2.FileSystemLoader(searchpath=template_path)
+        jinja_env = jinja2.Environment(loader=template_loader, autoescape=True)
         msg = Message(
             subject,
             sender=EmailConfig.MAIL_USERNAME,
-            recipients=receiver,
-            html = render_template('welcome_user.html', username= username)
+            # html = render_template('welcome_user.html', username= username)
         )
+        msg.recipients = receiver
         msg.body = body
+        email_type = utils.TEMPLATE_MAP.get(f'{filename}')
+        subject = utils.get_subject_by_type(email_type)
+        value_map = {
+            'username': username if username else False,
+            'subject': subject
+        }
         # msg.cc = cc_addresses if cc_addresses else False
         # msg.bcc = bcc_addresses if bcc_addresses else False
+        template_pathh = template_path + '/' + utils.get_template_path(f'{filename}')
+        template = jinja_env.get_template(email_type)
+        email_body = template.render(**value_map)
         # ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(str(absolute_path / 'templates')))
         # template = ENV.get_template(f'{filename}')
-        # email_body = template.render(username= username)
+        # email_body = template.render(username=username)
         # msg.html = render_template(f'{filename}', username=username)
-        # msg.html = email_body
+        msg.html = email_body
         if attachment_param and filename:
             msg.attach(filename=filename)
 
@@ -162,3 +183,4 @@ class SimpleMailProvider(MailProvider):
             msg.attach(content_type=html_body)
 
         mail.send(msg)
+        print("Email send successfully!!!!")

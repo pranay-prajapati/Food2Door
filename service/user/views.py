@@ -1,4 +1,6 @@
 import pyotp
+
+import email_service.utility.utils
 from query.role_query import RolesRepo
 from common.constant import INVALID_FORM_MESSAGE
 from common.mfa_secret import decrypt_mfa_secret, send_mfa, encrypt_mfa_secret
@@ -21,15 +23,15 @@ class UserData:
 
     @staticmethod
     def user_signup(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email)
 
         # check if user exists
-        if user:
-            return jsonify('User already exist', 403)
+        # if user:
+        #     return jsonify('User already exist', 403)
 
         # Generating mfa-secret-key  & temporary JWT token
         raw_mfa_secret = pyotp.random_base32()
@@ -54,7 +56,7 @@ class UserData:
             'mfa_secret': encrypt_mfa_secret(raw_mfa_secret),
         }
         user_data.append(data)
-        UserRepo.create_user(user_data)
+        # UserRepo.create_user(user_data)
 
         user = UserRepo.get_user_details(data.get("email"))
         if data.get("is_owner"):
@@ -72,8 +74,9 @@ class UserData:
         #     UserData.owner_user()
         data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
         user = UserRepo.get_user_details(email)
-        SimpleMailProvider.send_mail("Hello", ['devansh.v@zymr.com'], username="Devansh", body="abcacbabcabckab",
-                                     filename='templates/welcome_user.html')
+        SimpleMailProvider().send_mail(subject=email_service.utility.utils.SUBJECT_MAP.get('welcome_email'),
+                                       receiver=[user.email], username=user.name,
+                                       filename='welcome_email')
         return jsonify(
             {'message': 'success',
              "jwt_token": {
@@ -86,8 +89,8 @@ class UserData:
 
     @staticmethod
     def user_login(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         email = form.email.data
         password = form.password.data
 
