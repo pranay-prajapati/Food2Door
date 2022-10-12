@@ -1,6 +1,3 @@
-"admin, delivery_agent, customer, restaurant"
-
-
 class Permissions:
     ADD_USER = "Add User"
     DELETE_USER = "Delete User"
