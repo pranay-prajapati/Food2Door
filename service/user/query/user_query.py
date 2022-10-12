@@ -40,7 +40,7 @@ class UserRepo:
             for owner_data in data:
                 owner.append(Restaurant(**owner_data))
             db_session.add_all(owner)
-        if is_delivery_agent:
+        elif is_delivery_agent:
             for agent_data in data:
                 agent.append(DeliveryAgent(**agent_data))
             db_session.add_all(agent)
