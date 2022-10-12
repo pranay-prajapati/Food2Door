@@ -29,9 +29,9 @@ class UserData:
         email = form.email.data
         user = UserRepo.get_user_details(email)
 
-        # check if user exists
-        # if user:
-        #     return jsonify('User already exist', 403)
+        #check if user exists
+        if user:
+            return jsonify('User already exist', 403)
 
         # Generating mfa-secret-key  & temporary JWT token
         raw_mfa_secret = pyotp.random_base32()
@@ -56,7 +56,7 @@ class UserData:
             'mfa_secret': encrypt_mfa_secret(raw_mfa_secret),
         }
         user_data.append(data)
-        # UserRepo.create_user(user_data)
+        UserRepo.create_user(user_data)
 
         user = UserRepo.get_user_details(data.get("email"))
         if data.get("is_owner"):
@@ -74,7 +74,7 @@ class UserData:
         #     UserData.owner_user()
         data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
         user = UserRepo.get_user_details(email)
-        SimpleMailProvider().send_mail(subject=email_service.utility.utils.SUBJECT_MAP.get('welcome_email'),
+        SimpleMailProvider.send_mail(subject=email_service.utility.utils.SUBJECT_MAP.get('welcome_email'),
                                        receiver=[user.email], username=user.name,
                                        filename='welcome_email')
         return jsonify(
