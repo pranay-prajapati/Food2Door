@@ -1,19 +1,19 @@
-"""add permissions to roles table
+"""Added roles in Roles table
 
-Revision ID: 0002
-Revises: 0001
-Create Date: 2022-10-07 11:33:49.852369
+Revision ID: 0001
+Revises: 
+Create Date: 2022-10-07 14:45:00.982300
 
 """
 from alembic import op
 import sqlalchemy as sa
-from common import role_constant
 import json
+from common import role_constant
 
 
 # revision identifiers, used by Alembic.
-revision = '0002'
-down_revision = '0001'
+revision = '0001'
+down_revision = None
 branch_labels = None
 depends_on = None
 

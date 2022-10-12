@@ -1,15 +1,15 @@
 import pyotp
-
+from query.role_query import RolesRepo
 from common.constant import INVALID_FORM_MESSAGE
 from common.mfa_secret import decrypt_mfa_secret, send_mfa, encrypt_mfa_secret
 from exception.http_exception import HttpException
-from service.user.query import UserRepo
+from service.user.query.user_query import UserRepo
 from flask import jsonify, Flask, request
 from common import constant
 from models.user_model import User
 from common.password_converter import generate_password_hash
 from common.jwt_token import generate_jwt_token, decode_jwt_token
-from common import constant
+from common import constant, role_constant
 from common.session import get_current_user_id, create_session
 from email_service.email_config import SimpleMailProvider
 
@@ -21,8 +21,8 @@ class UserData:
 
     @staticmethod
     def user_signup(form):
-        # if not form.validate_on_submit():
-        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email)
@@ -53,11 +53,21 @@ class UserData:
             'is_delivery_agent': form.is_delivery_agent.data,
             'mfa_secret': encrypt_mfa_secret(raw_mfa_secret),
         }
-        # role_data = RolesRepo.get_role(role_constant.Roles.USER_PERMISSION)
-
         user_data.append(data)
-        # UserRepo.create_user(user_data)
+        UserRepo.create_user(user_data)
 
+        user = UserRepo.get_user_details(data.get("email"))
+        if data.get("is_owner"):
+            role_data = RolesRepo.get_role(role_constant.RoleType.RESTAURANT_OWNER)
+        elif data.get("is_delivery_agent"):
+            role_data = RolesRepo.get_role(role_constant.RoleType.DELIVERY_AGENT)
+        else:
+            role_data = RolesRepo.get_role(role_constant.RoleType.USER)
+
+        RolesRepo.add_role(role_data, user.user_id)
+        data['role'] = role_data.role_name
+
+        data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
         # if data.get('is_owner'):
         #     UserData.owner_user()
         data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
@@ -76,6 +86,8 @@ class UserData:
 
     @staticmethod
     def user_login(form):
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE, 400)
         email = form.email.data
         password = form.password.data
 
@@ -101,8 +113,8 @@ class UserData:
 
     @staticmethod
     def owner_user(form):
-        # if not form.validate_on_submit():
-        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE, 400)
         owner_data = list()
         restaurant_email = form.email.data
         fssai_number = form.fssai_number.data
@@ -121,11 +133,10 @@ class UserData:
             'gst_number': form.gst_number.data,
             'establishment_type': form.establishment_type.data,
             'outlet_type': form.outlet_type.data,
-            'is_owner': True
-
+            'user_id_fk': get_current_user_id()
         }
         owner_data.append(data)
-        UserRepo.create_user(owner_data, data.get('is_owner'))
+        UserRepo.create_user(owner_data, {'is_owner': True})
 
         return {'message': 'Owner details logged in successfully', 'data': data}
 
@@ -181,20 +192,22 @@ class MFA:
 
         token = token.encode(constant.UTF_ENCODING)
         decoded = decode_jwt_token(token)
+        permission_data = RolesRepo.fetch_assigned_roles(user_data.user_id)
 
         if decoded["email_service"] == user_data.email:
             totp = pyotp.TOTP(
                 mfa_secret, interval=constant.MFA_TIME_INTERVAL)
             if totp.verify(mfa_code):
                 jwt_payload = {
-                    'email_service': user_data.email,
+                    'email': user_data.email,
                     'name': user_data.name,
                     'contact_number': user_data.contact_number,
                     'address': user_data.address,
                     'city': user_data.city,
                     'state': user_data.state,
                     'zip_code': user_data.zip_code,
-                    'user_id': user_data.user_id
+                    'user_id': user_data.user_id,
+                    'role_permissions': permission_data
                 }
                 jwt_token = generate_jwt_token(user_data.email,
                                                constant.TEMPORARY_JWT_EXP_TIME_MINS, jwt_payload=jwt_payload)
@@ -205,11 +218,12 @@ class MFA:
                     "code": constant.SUCCESS_CODE,
                     "message": constant.CODE_VERIFIED_SUCCESSFULLY,
                     "user_data": {
-                        'email_service': user_data.email,
+                        'email': user_data.email,
                         'name': user_data.name,
                         'contact_number': user_data.contact_number,
                         'address': user_data.address,
-                        'user_id': user_id
+                        'user_id': user_id,
+                        'role_permissions': permission_data
                     }
                 }
                 return jsonify(response, 200)
