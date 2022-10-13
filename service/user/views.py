@@ -23,8 +23,8 @@ class UserData:
 
     @staticmethod
     def user_signup(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email)
@@ -223,7 +223,7 @@ class MFA:
         decoded = decode_jwt_token(token)
         permission_data = RolesRepo.fetch_assigned_roles(user_data.user_id)
 
-        if decoded["email_service"] == user_data.email:
+        if decoded["email"] == user_data.email:
             totp = pyotp.TOTP(
                 mfa_secret, interval=constant.MFA_TIME_INTERVAL)
             if totp.verify(mfa_code):

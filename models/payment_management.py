@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    Boolean,
     Column,
     Integer,
     String,
@@ -9,6 +10,7 @@ from sqlalchemy import (
 from models.common_models import DatetimeMixin, OrderStatus, PaymentMode
 from database.db_models import handler
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import expression
 
 
 class Order(DatetimeMixin, handler.Base):
@@ -18,10 +20,12 @@ class Order(DatetimeMixin, handler.Base):
     )
     agent_id_fk = Column(Integer, ForeignKey("delivery_agent.agent_id"))
     user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+    menu_id_fk = Column(Integer, ForeignKey("menu.menu_id"))
     order_status = Column(Enum(OrderStatus))
     pickup_time = Column(DateTime)
     delivery_time = Column(DateTime)
     quantity = Column(String(64))
+    is_delivered = Column(Boolean, server_default=expression.false())
 
     # menu = relationship("Menu")
 

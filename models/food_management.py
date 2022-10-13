@@ -16,7 +16,7 @@ class Menu(handler.Base):
         Integer, primary_key=True, unique=True, autoincrement=True
     )
     restaurant_id_fk = Column(Integer, ForeignKey("restaurant.restaurant_id"))
-    order_id_fk = Column(Integer, ForeignKey("order.order_id"), nullable=True)
+    # order_id_fk = Column(Integer, ForeignKey("order.order_id"), nullable=True)
     dish_name = Column(String(200), nullable=False)
     food_image_path = Column(String(1024))
     price = Column(Float, nullable=False)
