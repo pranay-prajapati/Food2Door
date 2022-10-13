@@ -1,19 +1,10 @@
-import smtplib
-import os
-from abc import ABC, abstractmethod
-import email.utils
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
-from flask import Flask, current_app, render_template
+from flask import Flask
 from flask_mail import Mail, Message
 import pathlib
 import jinja2
 from email_service.utility import utils
 
 absolute_path = (pathlib.Path(__file__).parent.absolute())
-# msg = MIMEMultipart()
 app = Flask(__name__)
 mail = Mail(app)  # instantiate the mail class
 
@@ -26,6 +17,7 @@ class EmailConfig:
     MAIL_USE_TLS = app.config['MAIL_USE_TLS'] = False
     MAIL_USE_SSL = app.config['MAIL_USE_SSL'] = True
     mail = Mail(app)
+
 
 class SimpleMailProvider:
     def __init__(self):

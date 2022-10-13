@@ -70,9 +70,6 @@ class UserData:
         data['role'] = role_data.role_name
 
         data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
-        # if data.get('is_owner'):
-        #     UserData.owner_user()
-        data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
         user = UserRepo.get_user_details(email)
         value_map = {
             'username': user.name,
@@ -148,8 +145,8 @@ class UserData:
 
     @staticmethod
     def delivery_agent(form):
-        # if not form.validate_on_submit():
-        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE, 400)
         agent_data = list()
         aadhar_card_number = form.aadhar_card_number.data
 
