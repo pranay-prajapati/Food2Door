@@ -113,6 +113,10 @@ class UserData:
             }
         }
         user = UserRepo.get_user_details(email)
+        if user.is_owner:
+            print("welcome to restaurant panel")
+        if user.is_delivery_agent:
+            print("welcome to delivery panel")
         value_map = {
             'username': user.name,
             'mfa_code': send_mfa(mfa_secret)
@@ -178,7 +182,19 @@ class UserData:
 
         return {'message': 'Agent details logged in successfully', 'data': data}
 
+class DeliveryAgent:
 
+    @staticmethod
+    def delivery_data():
+        user = get_current_user_id()
+        pass
+
+class RestaurantOwner:
+
+    @staticmethod
+    def order_data():
+        user = get_current_user_id()
+        pass
 class MFA:
     @staticmethod
     def verify_mfa(form):
