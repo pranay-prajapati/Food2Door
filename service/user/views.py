@@ -112,6 +112,16 @@ class UserData:
                 "mfa_code": send_mfa(mfa_secret)
             }
         }
+        user = UserRepo.get_user_details(email)
+        value_map = {
+            'username': user.name,
+            'mfa_code': send_mfa(mfa_secret)
+        }
+        SimpleMailProvider.send_mail(
+            subject=email_service.utility.utils.SUBJECT_MAP.get('mfa_code'),
+            receiver=[user.email],
+            filename='mfa_code_email', value_map=value_map
+        )
         return {'message': 'login success', 'token': response_payload}
 
     @staticmethod

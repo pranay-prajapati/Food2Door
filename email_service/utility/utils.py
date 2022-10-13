@@ -1,11 +1,13 @@
 TEMPLATE_MAP = {
     'test_email': 'test_email.html',
     'welcome_email': 'welcome_user.html',
+    'mfa_code_email': 'mfa_code.html'
 }
 
 SUBJECT_MAP = {
     'test_email': 'Test Email Notification',
-    'welcome_email': 'Welcome to FooD2Door'
+    'welcome_email': 'Welcome to FooD2Door',
+    'mfa_code': 'Your Code has been sent successfully '
 }
 
 
