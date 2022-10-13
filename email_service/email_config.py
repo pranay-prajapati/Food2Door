@@ -26,27 +26,6 @@ class EmailConfig:
     MAIL_USE_TLS = app.config['MAIL_USE_TLS'] = False
     MAIL_USE_SSL = app.config['MAIL_USE_SSL'] = True
     mail = Mail(app)
-    # smtp_user = os.getenv("SMTP_USER")
-    # smtp_pass = os.getenv("SMTP_PASS")
-    # smtp_server = os.getenv("SMTP_SERVER")
-    # smtp_port = os.getenv("SMTP_PORT", "587")
-    # sender_email = os.getenv("SENDER_EMAIL", "")
-    # sender_name = os.getenv("SENDER_NAME", "Devansh")
-
-
-# class MailProvider(ABC):
-#     @abstractmethod
-#     def send_email(
-#             self,
-#             message_id: str,
-#             addressee: str,
-#             subject: str,
-#             html_body: str,
-#             attachment_param: dict,
-#             body: str,
-#             cc_addressee: str = None):
-#         raise NotImplementedError("Trying to call abstract method")
-
 
 class SimpleMailProvider:
     def __init__(self):
