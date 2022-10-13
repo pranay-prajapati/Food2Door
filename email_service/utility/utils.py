@@ -17,7 +17,7 @@ def get_subject_by_type(email_type: str):
 
 
 def get_template_path(request_type: str):
-    # if request_type not in TEMPLATE_MAP:
-    #     print(f'No Templated is found for type : {request_type}')
+    if request_type not in TEMPLATE_MAP:
+        print(f'No Templated is found for type : {request_type}')
     template_path = TEMPLATE_MAP.get(request_type)
     return template_path
