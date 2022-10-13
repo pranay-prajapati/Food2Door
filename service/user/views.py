@@ -1,14 +1,19 @@
 import pyotp
+
+import email_service.utility.utils
 from query.role_query import RolesRepo
 from common.constant import INVALID_FORM_MESSAGE
 from common.mfa_secret import decrypt_mfa_secret, send_mfa, encrypt_mfa_secret
 from exception.http_exception import HttpException
 from service.user.query.user_query import UserRepo
 from flask import jsonify, Flask, request
+from common import constant
+from models.user_model import User
 from common.password_converter import generate_password_hash
 from common.jwt_token import generate_jwt_token, decode_jwt_token
 from common import constant, role_constant
 from common.session import get_current_user_id, create_session
+from email_service.email_config import SimpleMailProvider
 
 app = Flask(__name__)
 app.config["WTF_CSRF_ENABLED"] = False
@@ -65,6 +70,13 @@ class UserData:
         data['role'] = role_data.role_name
 
         data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
+        user = UserRepo.get_user_details(email)
+        value_map = {
+            'username': user.name,
+        }
+        SimpleMailProvider.send_mail(subject=email_service.utility.utils.SUBJECT_MAP.get('welcome_email'),
+                                     receiver=[user.email],
+                                     filename='welcome_email', value_map=value_map)
         return jsonify(
             {'message': 'success',
              "jwt_token": {
@@ -133,8 +145,8 @@ class UserData:
 
     @staticmethod
     def delivery_agent(form):
-        # if not form.validate_on_submit():
-        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE, 400)
         agent_data = list()
         aadhar_card_number = form.aadhar_card_number.data
 
@@ -185,7 +197,7 @@ class MFA:
         decoded = decode_jwt_token(token)
         permission_data = RolesRepo.fetch_assigned_roles(user_data.user_id)
 
-        if decoded["email"] == user_data.email:
+        if decoded["email_service"] == user_data.email:
             totp = pyotp.TOTP(
                 mfa_secret, interval=constant.MFA_TIME_INTERVAL)
             if totp.verify(mfa_code):
