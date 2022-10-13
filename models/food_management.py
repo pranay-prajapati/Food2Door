@@ -4,7 +4,8 @@ from sqlalchemy import (
     String,
     Boolean,
     ForeignKey,
-    Float
+    Float,
+    JSON
 )
 from sqlalchemy.sql import expression
 from database.db_models import handler
@@ -22,7 +23,7 @@ class Menu(handler.Base):
     price = Column(Float, nullable=False)
     food_quantity = Column(String(64))
     is_customisable = Column(Boolean, server_default=expression.false())
-    ingredients = Column(String(200), nullable=False)
+    ingredients = Column(JSON)
 
     def __repr__(self):
         return '<Menu %r>' % self.restaurant_id_fk
