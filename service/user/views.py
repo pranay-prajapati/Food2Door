@@ -29,7 +29,7 @@ class UserData:
         email = form.email.data
         user = UserRepo.get_user_details(email)
 
-        #check if user exists
+        # check if user exists
         if user:
             return jsonify('User already exist', 403)
 
@@ -74,9 +74,12 @@ class UserData:
         #     UserData.owner_user()
         data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
         user = UserRepo.get_user_details(email)
+        value_map = {
+            'username': user.name,
+        }
         SimpleMailProvider.send_mail(subject=email_service.utility.utils.SUBJECT_MAP.get('welcome_email'),
-                                       receiver=[user.email], username=user.name,
-                                       filename='welcome_email')
+                                     receiver=[user.email],
+                                     filename='welcome_email', value_map=value_map)
         return jsonify(
             {'message': 'success',
              "jwt_token": {

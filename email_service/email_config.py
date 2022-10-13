@@ -64,7 +64,7 @@ class SimpleMailProvider:
     def send_mail(
             subject: str,
             receiver: list,
-            username: str = None,
+            value_map: dict = None,
             attachment_param: dict = None,
             html_body: str = None,
             filename=None,
@@ -77,25 +77,20 @@ class SimpleMailProvider:
 
         template_loader = jinja2.FileSystemLoader(searchpath=template_path)
         jinja_env = jinja2.Environment(loader=template_loader, autoescape=True)
+        email_type = utils.TEMPLATE_MAP.get(f'{filename}')
         msg = Message(
             subject,
-            sender=EmailConfig.MAIL_USERNAME,
-            # html = render_template('welcome_user.html', username= username)
+            sender=EmailConfig.MAIL_USERNAME
         )
         msg.recipients = receiver
-        msg.body = body
-        email_type = utils.TEMPLATE_MAP.get(f'{filename}')
-        subject = utils.get_subject_by_type(email_type)
-        value_map = {
-            'username': username if username else False,
-            'subject': subject
-        }
+        msg.body = body if body else False
+
         msg.cc = cc_addresses if cc_addresses else False
         msg.bcc = bcc_addresses if bcc_addresses else False
-        # template_pathh = template_path + '/' + utils.get_template_path(f'{filename}')
         template = jinja_env.get_template(email_type)
-        email_body = template.render(**value_map)
-        msg.html = email_body
+        if value_map:
+            email_body = template.render(**value_map)
+            msg.html = email_body
         if attachment_param and filename:
             msg.attach(filename=filename)
 
