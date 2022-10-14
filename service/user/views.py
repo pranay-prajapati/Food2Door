@@ -153,7 +153,7 @@ class UserData:
             'user_id_fk': get_current_user_id()
         }
         owner_data.append(data)
-        UserRepo.create_user(owner_data, {'is_owner': True})
+        UserRepo.create_user(owner_data, is_owner=True)
 
         return {'message': 'Owner details logged in successfully', 'data': data}
 
@@ -175,10 +175,9 @@ class UserData:
             'aadhar_card_number': aadhar_card_number,
             'vehicle_number': form.vehicle_number.data,
             'job_type': form.job_type.data,
-            'is_delivery_agent': True
         }
         agent_data.append(data)
-        UserRepo.create_user(agent_data, data.get('is_delivery_agent'))
+        UserRepo.create_user(agent_data, is_delivery_agent=True)
 
         return {'message': 'Agent details logged in successfully', 'data': data}
 
