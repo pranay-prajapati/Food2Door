@@ -4,7 +4,8 @@ from sqlalchemy import (
     String,
     Boolean,
     ForeignKey,
-    Float
+    Float,
+    JSON
 )
 from sqlalchemy.sql import expression
 from database.db_models import handler
@@ -16,13 +17,12 @@ class Menu(handler.Base):
         Integer, primary_key=True, unique=True, autoincrement=True
     )
     restaurant_id_fk = Column(Integer, ForeignKey("restaurant.restaurant_id"))
-    order_id_fk = Column(Integer, ForeignKey("order.order_id"), nullable=True)
     dish_name = Column(String(200), nullable=False)
     food_image_path = Column(String(1024))
     price = Column(Float, nullable=False)
     food_quantity = Column(String(64))
     is_customisable = Column(Boolean, server_default=expression.false())
-    ingredients = Column(String(200), nullable=False)
+    ingredients = Column(JSON)
 
     def __repr__(self):
         return '<Menu %r>' % self.restaurant_id_fk
