@@ -159,8 +159,8 @@ class UserData:
 
     @staticmethod
     def delivery_agent(form):
-        # if not form.validate_on_submit():
-        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE, 400)
         agent_data = list()
         aadhar_card_number = form.aadhar_card_number.data
 
