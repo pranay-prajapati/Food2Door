@@ -6,13 +6,15 @@ from sqlalchemy import (
     ForeignKey,
     JSON,
     Enum,
-    LargeBinary
-
+    LargeBinary,
+    TIMESTAMP
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression
 from database.db_models import handler
 from models.common_models import DatetimeMixin, VehicleType, JobType, EstablishmentType, OutletType
+
+USER_ID = "user.user_id"
 
 
 class User(DatetimeMixin, handler.Base):
@@ -26,6 +28,7 @@ class User(DatetimeMixin, handler.Base):
     state = Column(String(64))
     zip_code = Column(String(6))
     password_hash = Column(LargeBinary(64))
+    password_reset_at = Column(TIMESTAMP)
     mfa_secret = Column(LargeBinary(256))
     user_roles = relationship("UserRoles", backref="user")
     is_owner = Column(Boolean, server_default=expression.false())
@@ -59,7 +62,7 @@ class UserRoles(DatetimeMixin, handler.Base):
         Integer, nullable=False, primary_key=True, unique=True, autoincrement=True
     )
     role_id_fk = Column(Integer, ForeignKey("roles.role_id"))
-    user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+    user_id_fk = Column(Integer, ForeignKey(USER_ID))
 
     def __init__(self, **kwargs):
         super(UserRoles, self).__init__(**kwargs)
@@ -92,7 +95,7 @@ class Roles(DatetimeMixin, handler.Base):
 class DeliveryAgent(DatetimeMixin, handler.Base):
     __tablename__ = 'delivery_agent'
     agent_id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+    user_id_fk = Column(Integer, ForeignKey(USER_ID))
     vehicle_type = Column(Enum(VehicleType))
     driving_licence_number = Column(String(16), unique=True, nullable=False)
     aadhar_card_number = Column(String(16), unique=True, nullable=False)
@@ -117,7 +120,7 @@ class DeliveryAgent(DatetimeMixin, handler.Base):
 class Restaurant(DatetimeMixin, handler.Base):
     __tablename__ = 'restaurant'
     restaurant_id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+    user_id_fk = Column(Integer, ForeignKey(USER_ID))
     restaurant_name = Column(String(100), nullable=False)
     restaurant_address = Column(String(50), nullable=False)
     restaurant_contact = Column(String(10), nullable=False)

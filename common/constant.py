@@ -16,9 +16,11 @@ ENTITY_CREATED = 201
 
 # custom status codes
 UNAUTHORISED = 4001
+ENTITY_EXISTS = 4003
 
 # form data messages
 INVALID_FORM_MESSAGE = "Invalid form fields. Please check again the data you have entered."
+USER_ALREADY_EXIST = "User already exist"
 USER_DOES_NOT_EXIST = "User does not exist"
 NO_INVITATION = "No invitation"
 CODE_VERIFIED_SUCCESSFULLY = "Code Verified Successfully"
