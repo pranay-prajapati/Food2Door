@@ -49,3 +49,7 @@ class LoginForm(EmailForm):
 
 class VerifyCodeForm(EmailForm):
     code = StringField(validators=[DataRequired()])
+
+
+class ResetPasswordForm(EmailForm):
+    password = StringField(validators=[DataRequired(), PasswordValidator()])

@@ -1,15 +1,15 @@
+import datetime
 import pyotp
 
 import email_service.utility.utils
 from query.role_query import RolesRepo
-from common.constant import INVALID_FORM_MESSAGE
+from common.constant import INVALID_FORM_MESSAGE, USER_ALREADY_EXIST
 from common.mfa_secret import decrypt_mfa_secret, send_mfa, encrypt_mfa_secret
 from exception.http_exception import HttpException
 from service.user.query.user_query import UserRepo
 from flask import jsonify, Flask, request
-from common import constant
 from models.user_model import User
-from common.password_converter import generate_password_hash
+from common.password_converter import generate_password_hash, compare_password_hash
 from common.jwt_token import generate_jwt_token, decode_jwt_token
 from common import constant, role_constant
 from common.session import get_current_user_id, create_session
@@ -23,15 +23,16 @@ class UserData:
 
     @staticmethod
     def user_signup(form):
-        # if not form.validate_on_submit():
-        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email=email)
 
         # check if user exists
         if user:
-            return jsonify('User already exist', 403)
+            return HttpException(USER_ALREADY_EXIST,
+                                 constant.ENTITY_EXISTS, 403)
 
         # Generating mfa-secret-key  & temporary JWT token
         raw_mfa_secret = pyotp.random_base32()
@@ -139,7 +140,8 @@ class UserData:
         owner = UserRepo.get_owner_details(fssai_number)
         # check if user exists
         if owner:
-            return jsonify('User already exist', 403)
+            return HttpException(USER_ALREADY_EXIST,
+                                 constant.ENTITY_EXISTS, 403)
 
         data = {
             'restaurant_name': form.restaurant_name.data,
@@ -169,7 +171,8 @@ class UserData:
         agent = UserRepo.get_agent_details(aadhar_card_number)
         # check if user exists
         if agent:
-            return jsonify('User already exist', 403)
+            return HttpException(USER_ALREADY_EXIST,
+                                 constant.ENTITY_EXISTS, 403)
 
         data = {
             'vehicle_type': form.vehicle_type.data,
@@ -196,6 +199,8 @@ class RestaurantOwner:
     def order_data():
         user = get_current_user_id()
         pass
+
+
 class MFA:
     @staticmethod
     def verify_mfa(form):
@@ -260,3 +265,41 @@ class MFA:
         else:
             raise HttpException(constant.INVALID_JWT_TOKEN,
                                 constant.UNAUTHORISED, 401)
+
+
+class Password:
+    @staticmethod
+    def reset_password(form):
+        if not form.validate_on_submit():
+            raise HttpException(INVALID_FORM_MESSAGE,
+                                constant.BAD_REQUEST_CODE, 400)
+
+        email = form.email.data
+        password = form.password.data
+        user_data = UserRepo.get_user_details(email)
+
+        if not user_data:
+            raise HttpException(constant.USER_DOES_NOT_EXIST,
+                                constant.UNAUTHORISED, 401)
+
+        new_password_hash = generate_password_hash(password).encode("utf-8")
+        old_password_hash = user_data.password_hash
+
+        # compare password hash
+        compare_password_hash(old_password_hash, new_password_hash)
+
+        data = {
+            User.password_hash: generate_password_hash(password).encode(
+                "utf-8"
+            ),
+            User.password_reset_at: datetime.datetime.now(),
+        }
+
+        # update in db
+        UserRepo.update_by(user_data.email, data)
+
+        return jsonify(message="Password Reset Successfully")
+
+
+
+
