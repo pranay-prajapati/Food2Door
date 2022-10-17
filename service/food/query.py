@@ -20,3 +20,8 @@ class FoodRepo:
     def get_restaurant_data(user_id):
         res_data = Restaurant.query.filter(Restaurant.user_id_fk==user_id).first()
         return res_data
+
+    @staticmethod
+    def show_restaurant(location):
+        res_data = Restaurant.query.filter_by(restaurant_city=location).all()
+        return res_data

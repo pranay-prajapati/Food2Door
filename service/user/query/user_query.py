@@ -7,9 +7,12 @@ db_session = handler.db_session
 class UserRepo:
 
     @staticmethod
-    def get_user_details(email):
+    def get_user_details(email=None, user_id=None):
 
-        user = User.query.filter_by(email=email).first()
+        if email:
+            user = User.query.filter_by(email=email).first()
+        if user_id:
+            user = User.query.filter_by(user_id=user_id).first()
         return user
 
     @staticmethod

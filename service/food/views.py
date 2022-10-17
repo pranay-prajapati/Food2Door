@@ -3,6 +3,7 @@ from exception.http_exception import HttpException
 from common.constant import INVALID_FORM_MESSAGE
 from common.session import get_current_user_id
 from service.food.query import FoodRepo
+from service.user.query.user_query import UserRepo
 
 app = Flask(__name__)
 app.config["WTF_CSRF_ENABLED"] = False
@@ -31,3 +32,23 @@ class FoodData:
             'data': data,
             'message': 'success'
         })
+
+    @staticmethod
+    def show_restaurant():
+        user_data = UserRepo.get_user_details(user_id=get_current_user_id())
+        data = FoodRepo.show_restaurant(user_data.city)
+        res_list = list()
+        for i in range(len(data)):
+            restaurant_data = {
+                'restaurant_name': data[i].restaurant_name,
+                'restaurant_address': data[i].restaurant_address,
+                'restaurant_contact': data[i].restaurant_contact,
+                'establishment_type': data[i].establishment_type.value,
+                'outlet_type': data[i].outlet_type.value
+            }
+            res_list.append(restaurant_data)
+
+        return jsonify(
+            {'message': 'success',
+             'data': res_list
+             })

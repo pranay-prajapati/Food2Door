@@ -27,7 +27,7 @@ class UserData:
         #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
-        user = UserRepo.get_user_details(email)
+        user = UserRepo.get_user_details(email=email)
 
         # check if user exists
         if user:
@@ -58,7 +58,7 @@ class UserData:
         user_data.append(data)
         UserRepo.create_user(user_data)
 
-        user = UserRepo.get_user_details(data.get("email"))
+        user = UserRepo.get_user_details(email=data.get("email"))
         if data.get("is_owner"):
             role_data = RolesRepo.get_role(role_constant.RoleType.RESTAURANT_OWNER)
         elif data.get("is_delivery_agent"):
@@ -70,7 +70,7 @@ class UserData:
         data['role'] = role_data.role_name
 
         data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
-        user = UserRepo.get_user_details(email)
+        user = UserRepo.get_user_details(email=email)
         value_map = {
             'username': user.name,
         }
@@ -112,7 +112,7 @@ class UserData:
                 "mfa_code": send_mfa(mfa_secret)
             }
         }
-        user = UserRepo.get_user_details(email)
+        user = UserRepo.get_user_details(email=email)
         if user.is_owner:
             print("welcome to restaurant panel")
         if user.is_delivery_agent:
@@ -146,6 +146,8 @@ class UserData:
             'restaurant_address': form.restaurant_address.data,
             'restaurant_contact': form.restaurant_contact.data,
             'restaurant_email': restaurant_email,
+            'restaurant_state': form.restaurant_state.data,
+            'restaurant_city': form.restaurant_city.data,
             'fssai_number': fssai_number,
             'gst_number': form.gst_number.data,
             'establishment_type': form.establishment_type.data,

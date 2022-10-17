@@ -8,8 +8,15 @@ from service.food.views import FoodData
 
 food_management_route = Blueprint("food_management_route", __name__)
 
+
 @food_management_route.route("/add_menu", methods=["PUT"])
 def add_menu():
     form = MenuForm()
     response = FoodData.add_menu(form)
+    return response
+
+
+@food_management_route.route("/show_restaurant", methods=["GET"])
+def show_restaurant():
+    response = FoodData.show_restaurant()
     return response

@@ -122,6 +122,8 @@ class Restaurant(DatetimeMixin, handler.Base):
     restaurant_address = Column(String(50), nullable=False)
     restaurant_contact = Column(String(10), nullable=False)
     restaurant_email = Column(String(120), unique=True, nullable=False)
+    restaurant_state = Column(String(64), nullable=False)
+    restaurant_city = Column(String(64), nullable=False)
     fssai_number = Column(String(14), nullable=False)
     gst_number = Column(String(24), nullable=False)
     establishment_type = Column(Enum(EstablishmentType))
