@@ -20,3 +20,9 @@ def add_menu():
 def show_restaurant():
     response = FoodData.show_restaurant()
     return response
+
+
+@food_management_route.route("/show_restaurant/show_menu/<restaurant_id>", methods=["GET"])
+def show_menu(restaurant_id):
+    response = FoodData.show_menu(restaurant_id)
+    return response

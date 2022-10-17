@@ -40,6 +40,7 @@ class FoodData:
         res_list = list()
         for i in range(len(data)):
             restaurant_data = {
+                'restaurant_id': data[i].restaurant_id,
                 'restaurant_name': data[i].restaurant_name,
                 'restaurant_address': data[i].restaurant_address,
                 'restaurant_contact': data[i].restaurant_contact,
@@ -52,3 +53,28 @@ class FoodData:
             {'message': 'success',
              'data': res_list
              })
+
+    @staticmethod
+    def show_menu(restaurant_id):
+        data = FoodRepo.show_menu_by_restaurant_id(restaurant_id)
+        menu_list = list()
+        for i in range(len(data)):
+            menu_data = {
+                'menu_id': data[i].menu_id,
+                'dish_name': data[i].dish_name,
+                'price': data[i].price,
+                'food_image_path': data[i].food_image_path if data[i].food_image_path else None,
+                'food_quantity': data[i].food_quantity if data[i].food_quantity else None,
+                'is_customisable': data[i].is_customisable if data[i].is_customisable else False,
+                'ingredients': data[i].ingredients
+
+            }
+            menu_list.append(menu_data)
+
+        return jsonify(
+            {'message': 'success',
+             'data': menu_list
+             })
+
+
+

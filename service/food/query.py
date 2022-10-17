@@ -25,3 +25,8 @@ class FoodRepo:
     def show_restaurant(location):
         res_data = Restaurant.query.filter_by(restaurant_city=location).all()
         return res_data
+
+    @staticmethod
+    def show_menu_by_restaurant_id(restaurant_id):
+        menu_data = Menu.query.filter_by(restaurant_id_fk=restaurant_id).all()
+        return menu_data
