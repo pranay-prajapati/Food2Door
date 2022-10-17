@@ -76,5 +76,26 @@ class FoodData:
              'data': menu_list
              })
 
+    @staticmethod
+    def add_cart(restaurant_id, menu_ids):
 
+        menu_list = list()
+        order_list = list()
+        menu_ids.split(',').append(menu_list)
 
+        user_id = get_current_user_id()
+
+        # user_data = UserRepo.get_user_details(user_id=user_id)
+        #
+        for i in menu_list:
+            menu = FoodRepo.get_menu_details_by_id(int(menu_list[i]))
+            order_data = {
+                'user_id_fk': user_id,
+                'menu_id_fk': menu.menu_id,
+                'dish_name': menu.dish_name,
+                'price': menu.price,
+            }
+            order_list.append(order_data)
+
+        FoodRepo.add_cart(order_list)
+        # data = FoodRepo.add_cart(restaurant_id, menu_id)
