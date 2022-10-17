@@ -101,6 +101,7 @@ class DeliveryAgent(DatetimeMixin, handler.Base):
     aadhar_card_number = Column(String(16), unique=True, nullable=False)
     vehicle_number = Column(String(12), nullable=False)
     job_type = Column(Enum(JobType))
+    is_available = Column(Boolean, server_default=expression.true())
 
     def __repr__(self):
         return '<DeliveryAgent %r>' % self.user_id_fk
@@ -113,7 +114,8 @@ class DeliveryAgent(DatetimeMixin, handler.Base):
             'driving_licence_number': self.driving_licence_number,
             'aadhar_card_number': self.aadhar_card_number,
             'vehicle_number': self.vehicle_number,
-            'job_type': self.job_type
+            'job_type': self.job_type,
+            'is_available': self.is_available
         }
 
 
