@@ -53,3 +53,12 @@ class FoodRepo:
         db_session.flush()
 
 
+    @staticmethod
+    def order_acceptance(menu_id):
+        data = {
+            'is_accepted': True,
+        }
+        order = Order.query.filter_by(menu_id_fk=menu_id).update(data)
+        db_session.commit()
+        return bool(order)
+

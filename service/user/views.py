@@ -23,8 +23,8 @@ class UserData:
 
     @staticmethod
     def user_signup(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
         user = UserRepo.get_user_details(email=email)

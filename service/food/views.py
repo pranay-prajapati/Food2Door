@@ -84,18 +84,39 @@ class FoodData:
         menu_ids.split(',').append(menu_list)
 
         user_id = get_current_user_id()
-
+        restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
         # user_data = UserRepo.get_user_details(user_id=user_id)
         #
         for i in menu_list:
             menu = FoodRepo.get_menu_details_by_id(int(menu_list[i]))
             order_data = {
                 'user_id_fk': user_id,
+                'restaurant_id': restaurant_data.restaurant_id,
                 'menu_id_fk': menu.menu_id,
                 'dish_name': menu.dish_name,
                 'price': menu.price,
             }
+            FoodData.order_assignment(order_data)
+            order_data = {key: order_data[key] for key in order_data if key not in ['restaurant_id']}
             order_list.append(order_data)
 
         FoodRepo.add_cart(order_list)
         # data = FoodRepo.add_cart(restaurant_id, menu_id)
+
+        return jsonify({
+            'message': 'success'
+        })
+
+    @staticmethod
+    def order_assignment(order_data):
+        restaurant_data = FoodRepo.get_restaurant_by_id(order_data.get('restaurant_id'))
+        if restaurant_data.is_closed:
+            print('closed')
+
+        menu_data = FoodRepo.get_menu_details_by_id(order_data.get('menu_id'))
+        acceptance = FoodRepo.order_acceptance(menu_data.menu_id)
+        if acceptance:
+            print(f"your order accepted by {restaurant_data.restaurant_name}")
+            ##delivery agent code below this
+        else:
+            print("waiting for acceptance")
