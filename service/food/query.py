@@ -2,7 +2,7 @@ from models.food_management import Menu
 from models.payment_management import Order
 from models.user_model import User, Restaurant
 from database.db_models import handler
-
+from models.common_models import OrderStatus
 db_session = handler.db_session
 
 
@@ -52,11 +52,11 @@ class FoodRepo:
         db_session.commit()
         db_session.flush()
 
-
     @staticmethod
     def order_acceptance(menu_id):
         data = {
             'is_accepted': True,
+            'order_status': OrderStatus.placed.value
         }
         order = Order.query.filter_by(menu_id_fk=menu_id).update(data)
         db_session.commit()
