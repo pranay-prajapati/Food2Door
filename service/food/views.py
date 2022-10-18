@@ -119,7 +119,7 @@ class FoodData:
             print(f"your order accepted by {restaurant_data.restaurant_name}")
             preparing = FoodRepo.order_preparing(menu_data.menu_id)
             if preparing:
-                print(f"your order is preparing by {restaurant_data.restaurant_name}")
+                print(f"your food is being prepared by {restaurant_data.restaurant_name}")
             ##delivery agent code below this
         else:
             print("waiting for acceptance")
