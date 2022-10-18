@@ -73,3 +73,10 @@ class UserRepo:
 
         db_session.commit()
         db_session.flush()
+
+    @staticmethod
+    def get_available_delivery_agent_by_location(restaurant_location):# "[res_city] and [agent_city](user table) == location"
+        agent = DeliveryAgent.query.join(DeliveryAgent, DeliveryAgent.user_id_fk == User.user_id).\
+                filter(Restaurant.restaurant_city and User.city == restaurant_location).\
+                filter(DeliveryAgent.is_available == True).all()
+        return agent

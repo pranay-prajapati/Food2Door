@@ -96,7 +96,7 @@ class FoodData:
                 'dish_name': menu.dish_name,
                 'price': menu.price,
             }
-            FoodData.order_assignment(order_data)
+            FoodData.order_assignment(order_data, restaurant_data.restaurant_city)
             order_data = {key: order_data[key] for key in order_data if key not in ['restaurant_id']}
             order_list.append(order_data)
 
@@ -121,5 +121,6 @@ class FoodData:
             if preparing:
                 print(f"your food is being prepared by {restaurant_data.restaurant_name}")
             ##delivery agent code below this
+
         else:
             print("waiting for acceptance")
