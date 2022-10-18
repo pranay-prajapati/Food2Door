@@ -62,3 +62,11 @@ class FoodRepo:
         db_session.commit()
         return bool(order)
 
+    @staticmethod
+    def order_preparing(menu_id):
+        data = {
+            'order_status': OrderStatus.baking.value
+        }
+        order = Order.query.filter_by(menu_id_fk=menu_id).update(data)
+        db_session.commit()
+        return bool(order)
