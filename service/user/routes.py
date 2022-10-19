@@ -4,7 +4,7 @@ from common.rbac import has_permission
 from common.role_constant import Roles
 from common.session import get_current_user_id
 from service.forms.user_management_forms import SignupForm, LoginForm, OwnerSignupForm, AgentSignupForm, VerifyCodeForm, \
-    ResetPasswordForm
+    ResetPasswordForm, UpdateUserDetailForm
 from service.user.views import UserData, MFA, Password
 
 user_management_route = Blueprint("user_management_route", __name__)
@@ -63,4 +63,17 @@ def logout():
 def reset_password():
     form = ResetPasswordForm()
     response = Password.reset_password(form)
+    return response
+
+
+@user_management_route.route("/profile-info", methods=["GET"])
+def get_profile_details():
+    response = UserData.get_details()
+    return response
+
+
+@user_management_route.route("/profile-info", methods=["PUT"])
+def fetch_profile_details():
+    form = UpdateUserDetailForm()
+    response = UserData.update_details(form)
     return response
