@@ -95,24 +95,24 @@ class FoodData:
             menu = FoodRepo.get_menu_details_by_id(menu_list[i])
             order_data = {
                 'user_id_fk': user_id,
-                'restaurant_id': restaurant_data.restaurant_id,
+                'restaurant_id_fk': restaurant_data.restaurant_id,
                 'menu_id_fk': menu[0].menu_id,
                 'dish_name': menu[0].dish_name,
                 'price': menu[0].price,
                 'ingredients': menu[0].ingredients,
-                'quantity': cart_data.get('data')[i].get('food_quantity')
+                'food_quantity': cart_data.get('data')[i].get('food_quantity')
             }
             # if
             order_list.append(order_data)
         # addition to cart table
         FoodRepo.add_cart(order_list)
-        if cart_data.get('is_ordered'):
+        # if cart_data.get('is_ordered'):
         # if cart.is_ordered:
-            FoodData.order_assignment(order_list, restaurant_data)
+        #     FoodData.order_assignment(order_list, restaurant_data)
         # order_data = {key: order_data[key] for key in order_data if key not in ['restaurant_id']}
         # order_list.append(order_data)
 
-        FoodRepo.add_cart(order_list)
+        # FoodRepo.add_cart(order_list)
         # data = FoodRepo.add_cart(restaurant_id, menu_id)
 
         return jsonify({
@@ -121,10 +121,11 @@ class FoodData:
         })
 
     @staticmethod
-    def order_assignment(order_data, restaurant_data):
+    def agent_order_assignment(restaurant_id, menu_id, cart_id):
 
         order_list = list()
-        # restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
+        agent_list = list()
+        restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
         restaurant_city = restaurant_data.restaurant_city
         available_agent_data = UserRepo.get_available_delivery_agent_by_location(restaurant_city)
 
@@ -133,10 +134,17 @@ class FoodData:
             agent_details = UserRepo.get_user_details(user_id=user_id)
             agent_data = {
                 'agent_id': available_agent_data[i].agent_id,
-                'agent_name': available_agent_data[i].agent_name,
+                'agent_name': agent_details.name,
                 'agent_email': agent_details.email,
-                'agent_phone': agent_details.contact_number,
+                'agent_phone': agent_details.contact_number
             }
+            agent_list.append(agent_data)
+
+
+
+
+
+
             # send mail
 
 

@@ -19,7 +19,7 @@ depends_on = None
 def upgrade() -> None:
     # op.add_column('order', sa.Column('is_ordered', sa.BOOLEAN, server_default=expression.false()))
     # op.add_column('order', sa.Column('price', sa.Float))
-    # op.add_column('cart',sa.Column('user_id_fk', sa.Integer))
+    # op.add_column('cart',sa.Column('food_quantity', sa.String))
     pass
 
 def downgrade() -> None:

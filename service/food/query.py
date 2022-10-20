@@ -1,4 +1,4 @@
-from models.food_management import Menu
+from models.food_management import Menu,Cart
 from models.payment_management import Order
 from models.user_model import User, Restaurant
 from database.db_models import handler
@@ -47,7 +47,7 @@ class FoodRepo:
     def add_cart(data):
         cart = list()
         for cart_data in data:
-            cart.append(Order(**cart_data))
+            cart.append(Cart(**cart_data))
         db_session.add_all(cart)
         db_session.commit()
         db_session.flush()
@@ -70,3 +70,7 @@ class FoodRepo:
         order = Order.query.filter_by(menu_id_fk=menu_id).update(data)
         db_session.commit()
         return bool(order)
+    @staticmethod
+    def get_cart_details(cart_id):
+        cart_data = Cart.query.filter_by(cart_id=cart_id).first()
+        return cart_data

@@ -44,16 +44,15 @@ class Cart(handler.Base):
     cart_id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     restaurant_id_fk = Column(Integer, ForeignKey("restaurant.restaurant_id"))
     menu_id_fk = Column(Integer, ForeignKey("menu.menu_id"))
-    user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+    user_id_fk = Column(Integer, ForeignKey("tbl_user.user_id"))
     price = Column(Float, nullable=False)
     dish_name = Column(String(200))
+    food_quantity = Column(String(64))
     ingredients = Column(JSON)
     is_ordered = Column(Boolean, server_default=expression.false())
 
-
     def __repr__(self):
         return '<Menu %r>' % self.restaurant_id_fk
-
 
     def to_json(self):
         return {
@@ -63,6 +62,7 @@ class Cart(handler.Base):
             'user_id_fk': self.user_id_fk,
             'price': self.price,
             'dish_name': self.dish_name,
+            'food_quantity': self.food_quantity,
             'ingredients': self.ingredients,
             'is_ordered': self.is_ordered
 
