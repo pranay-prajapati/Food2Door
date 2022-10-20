@@ -1,4 +1,4 @@
-from flask import Blueprint, session, jsonify
+from flask import Blueprint, session, jsonify, request
 
 from common.rbac import has_permission
 from common.role_constant import Roles
@@ -63,4 +63,17 @@ def logout():
 def reset_password():
     form = ResetPasswordForm()
     response = Password.reset_password(form)
+    return response
+
+
+@user_management_route.route("/profile-info", methods=["GET"])
+def get_profile_details():
+    response = UserData.get_details()
+    return response
+
+
+@user_management_route.route("/profile-info", methods=["PUT"])
+def fetch_profile_details():
+    request_data = request.json
+    response = UserData.update_details(request_data)
     return response

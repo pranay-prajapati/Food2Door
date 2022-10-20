@@ -18,7 +18,6 @@ def get_session_data(session):
     """
 
     if "jwt_token" not in session.keys():
-        print("fdsgskjfdsglifsd", session.keys())
         raise HttpException(code=constant.BAD_REQUEST_CODE, http_code=401, message="User Not Logged In")
     jwt_token = session["jwt_token"]
     data = decode_jwt_token(jwt_token)
@@ -29,6 +28,12 @@ def get_current_user_id():
     session_data = get_session_data(session)
     user_id = session_data["jwt_payload"]["user_id"]
     return user_id
+
+
+def get_current_user_data():
+    session_data = get_session_data(session)
+    user_data = session_data["jwt_payload"]["email"]
+    return user_data
 
 
 def get_current_user_permissions(session_data):

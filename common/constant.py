@@ -16,6 +16,7 @@ ENTITY_CREATED = 201
 
 # custom status codes
 UNAUTHORISED = 4001
+BAD_REQUEST = 4000
 ENTITY_EXISTS = 4003
 
 # form data messages

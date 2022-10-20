@@ -12,7 +12,7 @@ from models.user_model import User
 from common.password_converter import generate_password_hash, compare_password_hash
 from common.jwt_token import generate_jwt_token, decode_jwt_token
 from common import constant, role_constant
-from common.session import get_current_user_id, create_session
+from common.session import get_current_user_id, create_session, get_current_user_data
 from email_service.email_config import SimpleMailProvider
 
 app = Flask(__name__)
@@ -183,6 +183,30 @@ class UserData:
         UserRepo.create_user(agent_data, is_delivery_agent=True)
 
         return {'message': 'Agent details logged in successfully', 'data': data}
+
+    @staticmethod
+    def get_details():
+        profile_data = UserRepo.get_user_details(get_current_user_data())
+        data = {
+            "name": profile_data.name,
+            "email": profile_data.email,
+            "contact": profile_data.contact_number,
+            "address": profile_data.address,
+            "city": profile_data.city,
+            "state": profile_data.state,
+            "zip_code": profile_data.zip_code
+        }
+        return jsonify({"data": data, "code": constant.SUCCESS_CODE})
+
+    @staticmethod
+    def update_details(request_data):
+        user_data = UserRepo.get_user_details(get_current_user_data())
+        UserRepo.update_by(user_data.email, request_data)
+        return jsonify({
+            "code": constant.SUCCESS_CODE,
+            "message": "Details updated successfully"
+        })
+
 
 class DeliveryAgent:
 
