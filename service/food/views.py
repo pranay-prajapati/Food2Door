@@ -1,5 +1,5 @@
 from flask import jsonify, Flask, request
-from email_config import SimpleMailProvider
+from email_service.email_config import SimpleMailProvider
 from exception.http_exception import HttpException
 from common.constant import INVALID_FORM_MESSAGE
 from common.session import get_current_user_id
@@ -123,12 +123,39 @@ class FoodData:
         })
 
     @staticmethod
-    def agent_order_assignment(restaurant_id, menu_id, cart_id):
+    def agent_order_assignment(restaurant_id, cart_id,menu_id= None):
 
         order_list = list()
         agent_list = list()
+        # menu_list = list(menu_id.split(','))
+        cart_list = list(cart_id.split(','))
+        user_id = get_current_user_id()
+        user_details = UserRepo.get_user_details(user_id=user_id)
+        customer_data = {
+            'customer_address': user_details.address,
+            'customer_name': user_details.name,
+            'customer_number': user_details.contact_number
+        }
         restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
         restaurant_city = restaurant_data.restaurant_city
+        restaurant_details = {
+            'restaurant_name': restaurant_data.restaurant_name,
+            'restaurant_address': restaurant_data.restaurant_address,
+            'restaurant_contact': restaurant_data.restaurant_contact
+        }
+        for i in range(len(cart_list)):
+            update_cart_details = FoodRepo.update_cart_details(cart_list[i])
+            if update_cart_details:
+                cart = FoodRepo.get_cart_details(cart_list[i])
+                order_data = {
+                    'user_id_fk': user_id,
+                    'dish_name': cart.dish_name,
+                    'price': cart.price,
+                    'ingredients': cart.ingredients
+                }
+                order_list.append(order_data)
+            else:
+                raise HttpException("something went wrong")
         available_agent_data = UserRepo.get_available_delivery_agent_by_location(restaurant_city)
 
         for i in range(len(available_agent_data)):
@@ -142,9 +169,10 @@ class FoodData:
             }
             agent_list.append(agent_data)
 
-            value_map = {
-                'agent_name': available_agent_data[i].agent_name,
-            }
+            value_map = {'agent_name': agent_data.get('agent_name'),
+                         "restaurant_data": restaurant_details,
+                         "customer_data": customer_data,
+                         "order_data": order_list}
             # send mail
             SimpleMailProvider.send_mail(
                 subject=email_service.utility.utils.SUBJECT_MAP.get('notify_agent'),
@@ -152,6 +180,9 @@ class FoodData:
                 filename='notify_delivery_agent', value_map=value_map
             )
 
+        return jsonify({
+            "message": "sent successfully"
+        })
 
         # send mail to restaurant
 
@@ -163,15 +194,15 @@ class FoodData:
         #     order_list.append(restaurant_data)
             # add to order table
 
-        menu_data = FoodRepo.get_menu_details_by_id(order_data.get('menu_id'))
-        acceptance = FoodRepo.order_acceptance(menu_data.menu_id)
-        if acceptance:
-            print(f"your order accepted by {restaurant_data.restaurant_name}")
-            preparing = FoodRepo.order_preparing(menu_data.menu_id)
-            if preparing:
-                print(f"your food is being prepared by {restaurant_data.restaurant_name}")
-                agent_data = UserRepo.get_available_delivery_agent_by_location(restaurant_data.restaurant_city)
-            ##delivery agent code below this
-
-        else:
-            print("waiting for acceptance")
+        # menu_data = FoodRepo.get_menu_details_by_id(order_data.get('menu_id'))
+        # acceptance = FoodRepo.order_acceptance(menu_data.menu_id)
+        # if acceptance:
+        #     print(f"your order accepted by {restaurant_data.restaurant_name}")
+        #     preparing = FoodRepo.order_preparing(menu_data.menu_id)
+        #     if preparing:
+        #         print(f"your food is being prepared by {restaurant_data.restaurant_name}")
+        #         agent_data = UserRepo.get_available_delivery_agent_by_location(restaurant_data.restaurant_city)
+        #     ##delivery agent code below this
+        #
+        # else:
+        #     print("waiting for acceptance")

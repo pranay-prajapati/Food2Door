@@ -39,7 +39,7 @@ def add_cart(restaurant_id, menu_id):
 # def restaurant_order_assignment(restaurant_id, menu_id, cart_id):
 #     response = FoodData.res_order_assignment(restaurant_id, menu_id, cart_id)
 #     return response
-@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/agent/<cart_id>")
+@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/agent/<cart_id>", methods=["POST"])
 def restaurant_order_assignment(restaurant_id, menu_id, cart_id):
-    response = FoodData.agent_order_assignment(restaurant_id, menu_id, cart_id)
+    response = FoodData.agent_order_assignment(restaurant_id, cart_id, menu_id)
     return response

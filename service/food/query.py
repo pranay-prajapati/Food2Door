@@ -1,8 +1,9 @@
-from models.food_management import Menu,Cart
+from models.food_management import Menu, Cart
 from models.payment_management import Order
 from models.user_model import User, Restaurant
 from database.db_models import handler
 from models.common_models import OrderStatus
+
 db_session = handler.db_session
 
 
@@ -19,7 +20,7 @@ class FoodRepo:
 
     @staticmethod
     def get_restaurant_data(user_id):
-        res_data = Restaurant.query.filter(Restaurant.user_id_fk==user_id).first()
+        res_data = Restaurant.query.filter(Restaurant.user_id_fk == user_id).first()
         return res_data
 
     @staticmethod
@@ -36,7 +37,6 @@ class FoodRepo:
     def get_restaurant_by_id(restaurant_id):
         res_data = Restaurant.query.filter_by(restaurant_id=restaurant_id).first()
         return res_data
-
 
     @staticmethod
     def get_menu_details_by_id(menu_id):
@@ -70,7 +70,14 @@ class FoodRepo:
         order = Order.query.filter_by(menu_id_fk=menu_id).update(data)
         db_session.commit()
         return bool(order)
+
     @staticmethod
     def get_cart_details(cart_id):
         cart_data = Cart.query.filter_by(cart_id=cart_id).first()
         return cart_data
+
+    @staticmethod
+    def update_cart_details(cart_id):
+        cart_update = Cart.query.filter_by(cart_id=cart_id).update({'is_ordered': True})
+        db_session.commit()
+        return bool(cart_update)
