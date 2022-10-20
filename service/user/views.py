@@ -2,18 +2,17 @@ import datetime
 import pyotp
 
 import email_service.utility.utils
-from common.config import Config
 from query.role_query import RolesRepo
 from common.constant import INVALID_FORM_MESSAGE, USER_ALREADY_EXIST
 from common.mfa_secret import decrypt_mfa_secret, send_mfa, encrypt_mfa_secret
 from exception.http_exception import HttpException
 from service.user.query.user_query import UserRepo
-from flask import jsonify, Flask, request, session
+from flask import jsonify, Flask, request
 from models.user_model import User
 from common.password_converter import generate_password_hash, compare_password_hash
 from common.jwt_token import generate_jwt_token, decode_jwt_token
 from common import constant, role_constant
-from common.session import get_current_user_id, create_session, get_current_user_data, get_session_data
+from common.session import get_current_user_id, create_session, get_current_user_data
 from email_service.email_config import SimpleMailProvider
 
 app = Flask(__name__)
@@ -200,34 +199,13 @@ class UserData:
         return jsonify({"data": data, "code": constant.SUCCESS_CODE})
 
     @staticmethod
-    def update_details(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
-        session_data = get_session_data(session)
-        logged_in_user_email = session_data["jwt_payload"]["email"]
-        user_data = UserRepo.get_user_details(logged_in_user_email)
-
-        name = form.name.data
-        contact_number = form.contact_number.data
-        address = form.address.data
-        city = form.city.data
-        state = form.state.data
-        zip_code = form.zip_code.data
-
-        if not any((name, contact_number, address, city, state, zip_code)):
-            raise HttpException(f"No Data Sent with Request",
-                                constant.BAD_REQUEST_CODE, 400)
-
-        data = {
-            "name": name,
-            "contact_number": contact_number,
-            "address": address,
-            "city": city,
-            "state": state,
-            "zip_code": zip_code
-        }
-        UserRepo.update_by(user_data.email, data)
-        return jsonify(message="Details updated successfully")
+    def update_details(request_data):
+        user_data = UserRepo.get_user_details(get_current_user_data())
+        UserRepo.update_by(user_data.email, request_data)
+        return jsonify({
+            "code": constant.SUCCESS_CODE,
+            "message": "Details updated successfully"
+        })
 
 
 class DeliveryAgent:

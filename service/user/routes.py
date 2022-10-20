@@ -1,4 +1,4 @@
-from flask import Blueprint, session, jsonify
+from flask import Blueprint, session, jsonify, request
 
 from common.rbac import has_permission
 from common.role_constant import Roles
@@ -74,6 +74,6 @@ def get_profile_details():
 
 @user_management_route.route("/profile-info", methods=["PUT"])
 def fetch_profile_details():
-    form = UpdateUserDetailForm()
-    response = UserData.update_details(form)
+    request_data = request.json
+    response = UserData.update_details(request_data)
     return response
