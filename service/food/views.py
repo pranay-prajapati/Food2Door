@@ -248,9 +248,9 @@ class FoodData:
 
             # order = FoodRepo.update_order_details(data)
             SimpleMailProvider.send_mail(
-                subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
+                subject=email_service.utility.utils.SUBJECT_MAP.get('picked_notification'),
                 receiver=[UserRepo.get_user_details(user_id=user_id).email],
-                filename='notify_customer', value_map=value_map
+                filename='picked_notification', value_map=value_map
             )
         if update == OrderStatus.delivered.name:
             for i in range(len(order_data_list)):
@@ -265,7 +265,7 @@ class FoodData:
             SimpleMailProvider.send_mail(
                 subject=email_service.utility.utils.SUBJECT_MAP.get('delivery_notification'),
                 receiver=[UserRepo.get_user_details(user_id=user_id).email],
-                filename='notify_customer', value_map=value_map
+                filename='delivery_notification', value_map=value_map
             )
 
         return jsonify({
