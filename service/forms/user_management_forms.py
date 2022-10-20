@@ -52,11 +52,3 @@ class VerifyCodeForm(EmailForm):
 class ResetPasswordForm(EmailForm):
     password = StringField(validators=[DataRequired(), PasswordValidator()])
 
-
-class UpdateUserDetailForm(FlaskForm):
-    name = StringField()
-    contact_number = StringField()
-    address = StringField()
-    city = StringField()
-    state = StringField()
-    zip_code = StringField()
