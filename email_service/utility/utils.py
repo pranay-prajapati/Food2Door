@@ -3,7 +3,8 @@ TEMPLATE_MAP = {
     'welcome_email': 'welcome_user.html',
     'mfa_code_email': 'mfa_code.html',
     'notify_delivery_agent': 'notify_delivery_agent.html',
-    'notify_restaurant': 'notify_restaurant.html'
+    'notify_restaurant': 'notify_restaurant.html',
+    'notify_customer': 'notify_customer.html',
 }
 
 SUBJECT_MAP = {
@@ -11,7 +12,8 @@ SUBJECT_MAP = {
     'welcome_email': 'Welcome to FooD2Door',
     'mfa_code': 'Your Code has been sent successfully ',
     'notify_agent': 'Request for Order Delivery',
-    'notify_restaurant_team': 'Request for Order'
+    'notify_restaurant_team': 'Request for Order',
+    'notify_customer': 'Order Update',
 }
 
 

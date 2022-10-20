@@ -81,3 +81,17 @@ class FoodRepo:
         cart_update = Cart.query.filter_by(cart_id=cart_id).update({'is_ordered': True})
         db_session.commit()
         return bool(cart_update)
+
+    @staticmethod
+    def update_order_details(data):
+        order = list()
+        for order_data in data:
+            order.append(Order(**order_data))
+        db_session.add_all(order)
+        db_session.commit()
+        db_session.flush()
+        return True
+        # order_update = Order.query.update(data)
+        # db_session.commit()
+        # return bool(order_update)
+

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import jsonify, Flask, request
 from email_service.email_config import SimpleMailProvider
 from exception.http_exception import HttpException
@@ -185,6 +187,45 @@ class FoodData:
         })
 
         # send mail to restaurant
+
+    @staticmethod
+    def agent_order_acceptance(restaurant_id, cart_id, menu_id,agent_id):
+        order_list = list()
+        # agent_list = list()
+        menu_list = list(menu_id.split(','))
+        cart_list = list(cart_id.split(','))
+        user_id = get_current_user_id()
+        restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
+        agent_user_id = UserRepo.get_agent_details_by_id(agent_id)
+        agent_details = UserRepo.get_user_details(user_id=agent_user_id.user_id_fk)
+        for i in range(len(menu_list)):
+            menu = FoodRepo.get_cart_details(cart_list[i])
+            order_data = {
+                'agent_id_fk': agent_id,
+                'user_id_fk': user_id,
+                # 'dish_name': menu.dish_name,
+                'menu_id_fk': menu.menu_id_fk,
+                'quantity': menu.food_quantity,
+                'price': menu.price,
+            }
+            order_list.append(order_data)
+        order_update = FoodRepo.update_order_details(order_list)
+        value_map = {
+            'username': UserRepo.get_user_details(user_id=user_id).name,
+            'agent_name': agent_details.name,
+            'agent_contact': agent_details.contact_number
+        }
+        SimpleMailProvider.send_mail(
+            subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
+            receiver=[UserRepo.get_user_details(user_id=user_id).email],
+            filename='notify_customer', value_map=value_map
+        )
+
+        return jsonify({
+            "message": "sent successfully"
+        })
+
+
 
 
         # agent_data = User

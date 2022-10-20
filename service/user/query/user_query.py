@@ -26,6 +26,11 @@ class UserRepo:
     def get_agent_details(aadhar_card_number):
         agent = DeliveryAgent.query.filter_by(aadhar_card_number=aadhar_card_number).first()
         return agent
+    @staticmethod
+    def get_agent_details_by_id(agent_id):
+        agent = DeliveryAgent.query.filter_by(agent_id=agent_id).first()
+        return agent
+
 
     @staticmethod
     def update_by(email, data):
