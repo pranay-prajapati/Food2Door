@@ -5,6 +5,7 @@ from email_service.email_config import SimpleMailProvider
 from exception.http_exception import HttpException
 from common.constant import INVALID_FORM_MESSAGE
 from common.session import get_current_user_id
+from models.common_models import OrderStatus
 from service.food.query import FoodRepo
 from service.user.query.user_query import UserRepo
 import email_service.utility.utils
@@ -189,7 +190,7 @@ class FoodData:
         # send mail to restaurant
 
     @staticmethod
-    def agent_order_acceptance(restaurant_id, cart_id, menu_id,agent_id):
+    def agent_order_acceptance(restaurant_id, cart_id, menu_id,agent_id, update= None):
         order_list = list()
         # agent_list = list()
         menu_list = list(menu_id.split(','))
@@ -209,17 +210,45 @@ class FoodData:
                 'price': menu.price,
             }
             order_list.append(order_data)
-        order_update = FoodRepo.update_order_details(order_list)
         value_map = {
             'username': UserRepo.get_user_details(user_id=user_id).name,
             'agent_name': agent_details.name,
             'agent_contact': agent_details.contact_number
         }
-        SimpleMailProvider.send_mail(
-            subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
-            receiver=[UserRepo.get_user_details(user_id=user_id).email],
-            filename='notify_customer', value_map=value_map
-        )
+        if not update:
+            order_update = FoodRepo.update_order_details(order_list)
+            if order_update:
+                SimpleMailProvider.send_mail(
+                    subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
+                    receiver=[UserRepo.get_user_details(user_id=user_id).email],
+                    filename='notify_customer', value_map=value_map
+                )
+            else:
+                raise HttpException("something went wrong")
+        if update == OrderStatus.picked.name:
+            data = {
+                'order_status': OrderStatus.picked.name,
+                'pickup_time': datetime.now(),
+                'is_picked': True,
+            }
+            order = FoodRepo.update_order_details(data)
+            SimpleMailProvider.send_mail(
+                subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
+                receiver=[UserRepo.get_user_details(user_id=user_id).email],
+                filename='notify_customer', value_map=value_map
+            )
+        if update == OrderStatus.delivered.name:
+            data = {
+                'order_status': OrderStatus.delivered.name,
+                'deliery_time': datetime.now(),
+                'is_delivered': True
+            }
+            FoodRepo.update_order_details(data)
+            SimpleMailProvider.send_mail(
+                subject=email_service.utility.utils.SUBJECT_MAP.get('delivery_notification'),
+                receiver=[UserRepo.get_user_details(user_id=user_id).email],
+                filename='notify_customer', value_map=value_map
+            )
 
         return jsonify({
             "message": "sent successfully"

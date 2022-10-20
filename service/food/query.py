@@ -83,7 +83,7 @@ class FoodRepo:
         return bool(cart_update)
 
     @staticmethod
-    def update_order_details(data):
+    def add_order_details(data):
         order = list()
         for order_data in data:
             order.append(Order(**order_data))
@@ -95,3 +95,8 @@ class FoodRepo:
         # db_session.commit()
         # return bool(order_update)
 
+    @staticmethod
+    def update_order_details(data,order_id=None):
+        order_data = Order.query.filter_by(order_id=order_id).update(data)
+        db_session.commit()
+        return bool(order_data)

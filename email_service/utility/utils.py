@@ -5,6 +5,8 @@ TEMPLATE_MAP = {
     'notify_delivery_agent': 'notify_delivery_agent.html',
     'notify_restaurant': 'notify_restaurant.html',
     'notify_customer': 'notify_customer.html',
+    'picked_notification': 'picked_notification.html',
+    'delivery_notification': 'delivery_notification.html',
 }
 
 SUBJECT_MAP = {
@@ -14,6 +16,8 @@ SUBJECT_MAP = {
     'notify_agent': 'Request for Order Delivery',
     'notify_restaurant_team': 'Request for Order',
     'notify_customer': 'Order Update',
+    'picked_notification': 'Order has been picked',
+    'delivery_notification': 'Order has been delivered',
 }
 
 
