@@ -53,3 +53,4 @@ class VerifyCodeForm(EmailForm):
 
 class ResetPasswordForm(EmailForm):
     password = StringField(validators=[DataRequired(), PasswordValidator()])
+
