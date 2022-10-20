@@ -37,3 +37,33 @@ class Menu(handler.Base):
             'is_customisable': self.is_customisable,
             'ingredients': self.ingredients
         }
+
+
+class Cart(handler.Base):
+    __tablename__ = 'cart'
+    cart_id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
+    restaurant_id_fk = Column(Integer, ForeignKey("restaurant.restaurant_id"))
+    menu_id_fk = Column(Integer, ForeignKey("menu.menu_id"))
+    user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+    price = Column(Float, nullable=False)
+    dish_name = Column(String(200))
+    ingredients = Column(JSON)
+    is_ordered = Column(Boolean, server_default=expression.false())
+
+
+    def __repr__(self):
+        return '<Menu %r>' % self.restaurant_id_fk
+
+
+    def to_json(self):
+        return {
+            'cart_id': self.cart_id,
+            'restaurant_id_fk': self.restaurant_id_fk,
+            'menu_id_fk': self.menu_id_fk,
+            'user_id_fk': self.user_id_fk,
+            'price': self.price,
+            'dish_name': self.dish_name,
+            'ingredients': self.ingredients,
+            'is_ordered': self.is_ordered
+
+        }

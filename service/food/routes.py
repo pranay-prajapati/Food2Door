@@ -1,4 +1,4 @@
-from flask import Blueprint, session, jsonify
+from flask import Blueprint, session, jsonify, request
 
 from common.rbac import has_permission
 from common.role_constant import Roles
@@ -30,5 +30,8 @@ def show_menu(restaurant_id):
 
 @food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart", methods=["POST"])
 def add_cart(restaurant_id, menu_id):
-    response = FoodData.add_cart(restaurant_id, menu_id)
+    cart_data = request.json
+    response = FoodData.add_cart(restaurant_id, menu_id, cart_data)
     return response
+
+# @food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/res")

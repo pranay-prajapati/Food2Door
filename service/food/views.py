@@ -30,7 +30,7 @@ class FoodData:
 
         return jsonify({
             'data': data,
-            'message': 'success'
+            'message': 'dish added successfully'
         })
 
     @staticmethod
@@ -77,28 +77,37 @@ class FoodData:
              })
 
     @staticmethod
-    def add_cart(restaurant_id, menu_ids):
+    def add_cart(restaurant_id, menu_ids, cart_data):
 
-        menu_list = list()
+        # menu_list = list()
         order_list = list()
-        menu_ids.split(',').append(menu_list)
+        menu_list = list(menu_ids.split(','))
 
         user_id = get_current_user_id()
         restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
+
         # user_data = UserRepo.get_user_details(user_id=user_id)
         #
-        for i in menu_list:
-            menu = FoodRepo.get_menu_details_by_id(int(menu_list[i]))
+
+        for i in range(len(menu_list)):
+
+            menu = FoodRepo.get_menu_details_by_id(menu_list[i])
             order_data = {
                 'user_id_fk': user_id,
                 'restaurant_id': restaurant_data.restaurant_id,
-                'menu_id_fk': menu.menu_id,
-                'dish_name': menu.dish_name,
-                'price': menu.price,
+                'menu_id_fk': menu[0].menu_id,
+                'dish_name': menu[0].dish_name,
+                'price': menu[0].price,
+                'ingredients': menu[0].ingredients,
+                'quantity': cart_data.get('data')[i].get('food_quantity')
             }
-            FoodData.order_assignment(order_data, restaurant_data.restaurant_city)
-            order_data = {key: order_data[key] for key in order_data if key not in ['restaurant_id']}
+            # if
             order_list.append(order_data)
+        #addition to cart table
+        #if cart.is_ordered:
+        FoodData.order_assignment(order_list, restaurant_id)
+        order_data = {key: order_data[key] for key in order_data if key not in ['restaurant_id']}
+        order_list.append(order_data)
 
         FoodRepo.add_cart(order_list)
         # data = FoodRepo.add_cart(restaurant_id, menu_id)
@@ -108,10 +117,27 @@ class FoodData:
         })
 
     @staticmethod
-    def order_assignment(order_data):
-        restaurant_data = FoodRepo.get_restaurant_by_id(order_data.get('restaurant_id'))
+    def order_assignment(order_data, restaurant_id):
+
+        order_list=list()
+        restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
         if restaurant_data.is_closed:
             print('closed')
+            raise HttpException('closed')
+
+        #send mail to restaurant
+
+
+        # agent_data = User
+
+
+        for i in range(len(order_data)):
+            # restaurant_data = FoodRepo.get_restaurant_by_id(order_data[i].get('restaurant_id'))
+            order_list.append(restaurant_data)
+            #add to order table
+
+
+
 
         menu_data = FoodRepo.get_menu_details_by_id(order_data.get('menu_id'))
         acceptance = FoodRepo.order_acceptance(menu_data.menu_id)
@@ -120,6 +146,7 @@ class FoodData:
             preparing = FoodRepo.order_preparing(menu_data.menu_id)
             if preparing:
                 print(f"your food is being prepared by {restaurant_data.restaurant_name}")
+                agent_data = UserRepo.get_available_delivery_agent_by_location(restaurant_data.restaurant_city)
             ##delivery agent code below this
 
         else:

@@ -63,6 +63,7 @@ class CuisineType(enum.Enum):
 
 
 class OrderStatus(enum.Enum):
+    in_cart = "In-Cart"
     placed = "Placed"
     baking = "Baking"
     picked = "Picked"

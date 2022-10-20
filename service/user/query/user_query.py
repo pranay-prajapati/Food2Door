@@ -1,3 +1,5 @@
+from sqlalchemy import and_, or_
+
 from models.user_model import User, Restaurant, DeliveryAgent
 from database.db_models import handler
 
@@ -75,8 +77,26 @@ class UserRepo:
         db_session.flush()
 
     @staticmethod
-    def get_available_delivery_agent_by_location(restaurant_location):# "[res_city] and [agent_city](user table) == location"
-        agent = DeliveryAgent.query.join(DeliveryAgent, DeliveryAgent.user_id_fk == User.user_id).\
-                filter(Restaurant.restaurant_city and User.city == restaurant_location).\
-                filter(DeliveryAgent.is_available == True).all()
-        return agent
+    def get_available_delivery_agent_by_location(restaurant_location):
+        # agent = DeliveryAgent.query.join(DeliveryAgent, DeliveryAgent.user_id_fk == User.user_id).\
+        #         filter(Restaurant.restaurant_city and User.city == restaurant_location).\
+        #         filter(DeliveryAgent.is_available == True).all()
+        # agent = DeliveryAgent.query.join(User, User.user_id == DeliveryAgent.user_id_fk
+        #                                  ).join(Restaurant, Restaurant.user_id_fk == User.user_id
+        #                                         ).filter(and_(User.is_delivery_agent == True,
+        #                                                       )).all()
+        # agent = DeliveryAgent.query.join(User, User.user_id == DeliveryAgent.user_id_fk
+        #                                  ).join(Restaurant, Restaurant.user_id_fk == User.user_id
+        #                                         ).filter(Restaurant.restaurant_city==restaurant_location).filter(
+        #     DeliveryAgent.is_available == True).all()
+
+        agent2 = DeliveryAgent.query.join(
+            User, User.user_id == DeliveryAgent.user_id_fk
+        ).filter(DeliveryAgent.is_available == True,
+                 User.city == restaurant_location).all()
+
+        # agent3 = DeliveryAgent.query.join(
+        #     Restaurant, Restaurant.user_id_fk == DeliveryAgent.user_id_fk
+        # ).filter(DeliveryAgent.is_available == True,
+        #          Restaurant.restaurant_city == restaurant_location)
+        return agent2

@@ -14,11 +14,11 @@ from sqlalchemy.sql import expression
 from database.db_models import handler
 from models.common_models import DatetimeMixin, VehicleType, JobType, EstablishmentType, OutletType
 
-USER_ID = "user.user_id"
+USER_ID = "tbl_user.user_id"
 
 
 class User(DatetimeMixin, handler.Base):
-    __tablename__ = 'user'
+    __tablename__ = 'tbl_user'
     user_id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     contact_number = Column(String(10), nullable=False)
