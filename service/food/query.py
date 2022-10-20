@@ -56,7 +56,8 @@ class FoodRepo:
     def order_acceptance(menu_id):
         data = {
             'is_accepted': True,
-            'order_status': OrderStatus.placed.value
+            # 'order_status': OrderStatus.placed.value
+            'order_status': OrderStatus.baking.value
         }
         order = Order.query.filter_by(menu_id_fk=menu_id).update(data)
         db_session.commit()
@@ -75,6 +76,12 @@ class FoodRepo:
     def get_cart_details(cart_id):
         cart_data = Cart.query.filter_by(cart_id=cart_id).first()
         return cart_data
+
+    @staticmethod
+    def get_order_details(order_id):
+        order_data = Cart.query.filter_by(order_id=order_id).first()
+        return order_data
+
 
     @staticmethod
     def update_cart_details(cart_id):

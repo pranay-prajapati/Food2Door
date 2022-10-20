@@ -147,18 +147,18 @@ class FoodData:
             'restaurant_contact': restaurant_data.restaurant_contact
         }
         for i in range(len(cart_list)):
-            update_cart_details = FoodRepo.update_cart_details(cart_list[i])
-            if update_cart_details:
-                cart = FoodRepo.get_cart_details(cart_list[i])
-                order_data = {
-                    'user_id_fk': user_id,
-                    'dish_name': cart.dish_name,
-                    'price': cart.price,
-                    'ingredients': cart.ingredients
-                }
-                order_list.append(order_data)
-            else:
-                raise HttpException("something went wrong")
+            # update_cart_details = FoodRepo.update_cart_details(cart_list[i])
+            # if update_cart_details:
+            cart = FoodRepo.get_cart_details(cart_list[i])
+            order_data = {
+                'user_id_fk': user_id,
+                'dish_name': cart.dish_name,
+                'price': cart.price,
+                'ingredients': cart.ingredients
+            }
+            order_list.append(order_data)
+            # else:
+            #     raise HttpException("something went wrong")
         available_agent_data = UserRepo.get_available_delivery_agent_by_location(restaurant_city)
 
         for i in range(len(available_agent_data)):
@@ -190,7 +190,8 @@ class FoodData:
         # send mail to restaurant
 
     @staticmethod
-    def agent_order_acceptance(restaurant_id, cart_id, menu_id,agent_id, update= None):
+    def agent_order_acceptance(restaurant_id, cart_id, menu_id,agent_id, order_id, update= None):
+        order_data_list = list(order_id.split(','))
         order_list = list()
         # agent_list = list()
         menu_list = list(menu_id.split(','))
@@ -199,9 +200,10 @@ class FoodData:
         restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
         agent_user_id = UserRepo.get_agent_details_by_id(agent_id)
         agent_details = UserRepo.get_user_details(user_id=agent_user_id.user_id_fk)
+
         for i in range(len(menu_list)):
             menu = FoodRepo.get_cart_details(cart_list[i])
-            order_data = {
+            cart_data = {
                 'agent_id_fk': agent_id,
                 'user_id_fk': user_id,
                 # 'dish_name': menu.dish_name,
@@ -209,41 +211,57 @@ class FoodData:
                 'quantity': menu.food_quantity,
                 'price': menu.price,
             }
-            order_list.append(order_data)
+
+            order_list.append(cart_data)
+
+        for i in range(len(order_data_list)):
+            order = FoodRepo.get_order_details(order_data_list[i])
+            order_data = {
+                "order_id": order.order_id,
+            }
+            order_data_list.append(order_data)
+
         value_map = {
             'username': UserRepo.get_user_details(user_id=user_id).name,
             'agent_name': agent_details.name,
             'agent_contact': agent_details.contact_number
         }
         if not update:
-            order_update = FoodRepo.update_order_details(order_list)
-            if order_update:
-                SimpleMailProvider.send_mail(
-                    subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
-                    receiver=[UserRepo.get_user_details(user_id=user_id).email],
-                    filename='notify_customer', value_map=value_map
-                )
-            else:
-                raise HttpException("something went wrong")
+            for i in range(len(order_data_list)):
+                order = FoodRepo.get_order_details(order_data_list[i])
+                order_update = FoodRepo.update_order_details(order_list, order.order_id)
+            SimpleMailProvider.send_mail(
+                subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
+                receiver=[UserRepo.get_user_details(user_id=user_id).email],
+                filename='notify_customer', value_map=value_map
+            )
+
         if update == OrderStatus.picked.name:
-            data = {
-                'order_status': OrderStatus.picked.name,
-                'pickup_time': datetime.now(),
-                'is_picked': True,
-            }
-            order = FoodRepo.update_order_details(data)
+            for i in range(len(order_data_list)):
+                order = FoodRepo.get_order_details(order_data_list[i])
+                data = {
+                    'order_status': OrderStatus.picked.name,
+                    'pickup_time': datetime.now(),
+                    'is_picked': True,
+                }
+                order_update = FoodRepo.update_order_details(data, order.order_id)
+
+            # order = FoodRepo.update_order_details(data)
             SimpleMailProvider.send_mail(
                 subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
                 receiver=[UserRepo.get_user_details(user_id=user_id).email],
                 filename='notify_customer', value_map=value_map
             )
         if update == OrderStatus.delivered.name:
-            data = {
-                'order_status': OrderStatus.delivered.name,
-                'deliery_time': datetime.now(),
-                'is_delivered': True
-            }
-            FoodRepo.update_order_details(data)
+            for i in range(len(order_data_list)):
+                order = FoodRepo.get_order_details(order_data_list[i])
+                data = {
+                    'order_status': OrderStatus.delivered.name,
+                    'deliery_time': datetime.now(),
+                    'is_delivered': True
+                }
+                order_update = FoodRepo.update_order_details(data, order.order_id)
+
             SimpleMailProvider.send_mail(
                 subject=email_service.utility.utils.SUBJECT_MAP.get('delivery_notification'),
                 receiver=[UserRepo.get_user_details(user_id=user_id).email],
@@ -276,3 +294,54 @@ class FoodData:
         #
         # else:
         #     print("waiting for acceptance")
+
+
+    @staticmethod
+    def res_order_assignment(restaurant_id, menu_id, cart_id):
+        order_list = list()
+        menu_list = list(menu_id.split(','))
+        cart_list = list(cart_id.split(','))
+        user_id = get_current_user_id()
+        user_details = UserRepo.get_user_details(user_id=user_id)
+
+        customer_data = {
+            'customer_address': user_details.address,
+            'customer_name': user_details.name,
+            'customer_number': user_details.contact_number
+        }
+
+        # menu_data = FoodRepo.get_menu_details_by_id(menu_id)
+
+        for i in range(len(cart_list)):
+            update_cart_details = FoodRepo.update_cart_details(cart_list[i])
+            if update_cart_details:
+                menu = FoodRepo.get_cart_details(cart_list[i])
+                order_data = {
+                    'user_id_fk': user_id,
+                    'dish_name': menu.dish_name,
+                    'price': menu.price,
+                    'quantity': menu.food_quantity,
+                    'ingredients': menu.ingredients
+                }
+                order_list.append(order_data)
+                FoodRepo.order_acceptance(menu_id)
+            else:
+                raise HttpException(message="Something went wrong")
+        FoodRepo.add_order_details(order_list)
+        # FoodRepo.order_acceptance(menu_id)
+        restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
+        value_map = {
+            'restaurant_name': restaurant_data.restaurant_name,
+            "customer_name": customer_data["customer_name"],
+            'customer_data': customer_data,
+            'order_data': order_list
+        }
+        SimpleMailProvider.send_mail(
+            subject=email_service.utility.utils.SUBJECT_MAP.get('notify_restaurant_team'),
+            receiver=restaurant_data.restaurant_email,
+            filename='notify_restaurant', value_map=value_map
+        )
+
+        return jsonify({
+            "message": "sent successfully"
+        })
