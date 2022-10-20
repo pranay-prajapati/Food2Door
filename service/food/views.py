@@ -1,9 +1,11 @@
 from flask import jsonify, Flask, request
+from email_config import SimpleMailProvider
 from exception.http_exception import HttpException
 from common.constant import INVALID_FORM_MESSAGE
 from common.session import get_current_user_id
 from service.food.query import FoodRepo
 from service.user.query.user_query import UserRepo
+import email_service.utility.utils
 
 app = Flask(__name__)
 app.config["WTF_CSRF_ENABLED"] = False
@@ -140,13 +142,15 @@ class FoodData:
             }
             agent_list.append(agent_data)
 
-
-
-
-
-
+            value_map = {
+                'agent_name': available_agent_data[i].agent_name,
+            }
             # send mail
-
+            SimpleMailProvider.send_mail(
+                subject=email_service.utility.utils.SUBJECT_MAP.get('notify_agent'),
+                receiver=[agent_details.email],
+                filename='notify_delivery_agent', value_map=value_map
+            )
 
 
         # send mail to restaurant
