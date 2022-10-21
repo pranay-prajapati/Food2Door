@@ -17,25 +17,25 @@ app.config["WTF_CSRF_ENABLED"] = False
 class FoodData:
 
     @staticmethod
-    def add_menu(form):
-        # if not form.validate_on_submit():
-        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
-
+    def add_menu(request_data):
         restaurant_data = list()
         user_id = get_current_user_id()
-        data = {
-            'restaurant_id_fk': FoodRepo.get_restaurant_data(user_id).restaurant_id,
-            'dish_name': form.dish_name.data,
-            'price': form.price.data,
-            'ingredients': form.ingredients.data if form.ingredients.data else None,
-            'is_customisable': form.is_customisable.data if form.is_customisable.data else False
-        }
-        restaurant_data.append(data)
+
+        for i in range(len(request_data["data"])):
+            menu_data = {
+                'restaurant_id_fk': FoodRepo.get_restaurant_data(user_id).restaurant_id,
+                'dish_name': request_data.get("data")[i].get("dish_name"),
+                'price': request_data.get("data")[i].get("price"),
+                "food_quantity": request_data.get("data")[i].get("food_quantity"),
+                'ingredients': request_data.get("data")[i].get("ingredients"),
+                'is_customisable': request_data.get("data")[i].get("is_customisable")
+            }
+            restaurant_data.append(menu_data)
         FoodRepo.add_menu(restaurant_data)
 
         return jsonify({
-            'data': data,
-            'message': 'dish added successfully'
+            'data': restaurant_data,
+            'message': 'dishes added successfully'
         })
 
     @staticmethod
