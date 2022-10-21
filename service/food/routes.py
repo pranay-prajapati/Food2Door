@@ -5,11 +5,13 @@ from common.role_constant import Roles
 from common.session import get_current_user_id
 from service.forms.food_management_forms import MenuForm
 from service.food.views import FoodData
+from common.role_constant import Roles
 
 food_management_route = Blueprint("food_management_route", __name__)
 
 
 @food_management_route.route("/add-menu", methods=["PUT"])
+@has_permission(permissions=Roles.RESTAURANT_PERMISSION)
 def add_menu():
     form = MenuForm()
     response = FoodData.add_menu(form)

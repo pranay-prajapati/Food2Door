@@ -105,7 +105,8 @@ class FoodData:
                 'dish_name': menu[0].dish_name,
                 'price': menu[0].price,
                 'ingredients': menu[0].ingredients,
-                'food_quantity': cart_data.get('data')[i].get('food_quantity')
+                'food_quantity': cart_data.get('data')[i].get('food_quantity'),
+                'is_ordered': cart_data.get('data')[i].get('is_ordered')
             }
             # if
             order_list.append(order_data)
@@ -119,6 +120,7 @@ class FoodData:
 
         # FoodRepo.add_cart(order_list)
         # data = FoodRepo.add_cart(restaurant_id, menu_id)
+        # data =
 
         return jsonify({
             'message': 'order successfully' if cart_data.get('is_ordered') else 'complete your order request',
@@ -126,7 +128,7 @@ class FoodData:
         })
 
     @staticmethod
-    def agent_order_assignment(restaurant_id, cart_id,menu_id= None):
+    def agent_order_assignment(restaurant_id, cart_id, menu_id=None):
 
         order_list = list()
         agent_list = list()
@@ -190,7 +192,7 @@ class FoodData:
         # send mail to restaurant
 
     @staticmethod
-    def agent_order_acceptance(restaurant_id, cart_id, menu_id,agent_id, order_id, update= None):
+    def agent_order_acceptance(restaurant_id, cart_id, menu_id, agent_id, order_id, update=None):
         order_data_list = list(order_id.split(','))
         order_list = list()
         # agent_list = list()
@@ -272,15 +274,12 @@ class FoodData:
             "message": "sent successfully"
         })
 
-
-
-
         # agent_data = User
 
         # for i in range(len(order_data)):
         #     # restaurant_data = FoodRepo.get_restaurant_by_id(order_data[i].get('restaurant_id'))
         #     order_list.append(restaurant_data)
-            # add to order table
+        # add to order table
 
         # menu_data = FoodRepo.get_menu_details_by_id(order_data.get('menu_id'))
         # acceptance = FoodRepo.order_acceptance(menu_data.menu_id)
@@ -294,7 +293,6 @@ class FoodData:
         #
         # else:
         #     print("waiting for acceptance")
-
 
     @staticmethod
     def res_order_assignment(restaurant_id, menu_id, cart_id):
