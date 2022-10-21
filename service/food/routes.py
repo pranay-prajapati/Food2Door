@@ -3,7 +3,6 @@ from flask import Blueprint, session, jsonify, request
 from common.rbac import has_permission
 from common.role_constant import Roles
 from common.session import get_current_user_id
-from service.forms.food_management_forms import MenuForm
 from service.food.views import FoodData
 from common.role_constant import Roles
 
