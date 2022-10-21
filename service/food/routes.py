@@ -13,8 +13,8 @@ food_management_route = Blueprint("food_management_route", __name__)
 @food_management_route.route("/add-menu", methods=["PUT"])
 @has_permission(permissions=Roles.RESTAURANT_PERMISSION)
 def add_menu():
-    form = MenuForm()
-    response = FoodData.add_menu(form)
+    request_data = request.json
+    response = FoodData.add_menu(request_data)
     return response
 
 
