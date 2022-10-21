@@ -79,7 +79,7 @@ class FoodRepo:
 
     @staticmethod
     def get_order_details(order_id):
-        order_data = Cart.query.filter_by(order_id=order_id).first()
+        order_data = Order.query.filter_by(order_id=order_id).first()
         return order_data
 
 

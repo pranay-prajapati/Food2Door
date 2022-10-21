@@ -31,6 +31,7 @@ def show_menu(restaurant_id):
 
 
 @food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart", methods=["POST"])
+@has_permission(permissions=Roles.USER_PERMISSION)
 def add_cart(restaurant_id, menu_id):
     cart_data = request.json
     response = FoodData.add_cart(restaurant_id, menu_id, cart_data)
@@ -53,6 +54,7 @@ def agent_order_assignment(restaurant_id, menu_id, cart_id):
                              methods=["POST"])
 def agent_order_acceptance(restaurant_id, menu_id, cart_id, agent_id, order_id):
     update = request.json if request.json else None
+
     response = FoodData.agent_order_acceptance(restaurant_id, cart_id, menu_id, agent_id, order_id, update)
     return response
 

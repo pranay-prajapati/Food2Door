@@ -192,7 +192,7 @@ class FoodData:
         # send mail to restaurant
 
     @staticmethod
-    def agent_order_acceptance(restaurant_id, cart_id, menu_id, agent_id, order_id, update=None):
+    def agent_order_acceptance(restaurant_id, cart_id, menu_id, agent_id, order_id, update):
         order_data_list = list(order_id.split(','))
         order_list = list()
         # agent_list = list()
@@ -216,29 +216,29 @@ class FoodData:
 
             order_list.append(cart_data)
 
-        for i in range(len(order_data_list)):
-            order = FoodRepo.get_order_details(order_data_list[i])
-            order_data = {
-                "order_id": order.order_id,
-            }
-            order_data_list.append(order_data)
+        # for i in range(len(order_data_list)):
+        #     order = FoodRepo.get_order_details(order_data_list[i])
+        #     order_data = {
+        #         "order_id": order.order_id,
+        #     }
+        #     order_data_list.append(order_data)
 
         value_map = {
             'username': UserRepo.get_user_details(user_id=user_id).name,
             'agent_name': agent_details.name,
             'agent_contact': agent_details.contact_number
         }
-        if not update:
+        if update.get('update') is None:
             for i in range(len(order_data_list)):
                 order = FoodRepo.get_order_details(order_data_list[i])
-                order_update = FoodRepo.update_order_details(order_list, order.order_id)
+                order_update = FoodRepo.update_order_details(order_list[i], order.order_id)
             SimpleMailProvider.send_mail(
                 subject=email_service.utility.utils.SUBJECT_MAP.get('notify_customer'),
                 receiver=[UserRepo.get_user_details(user_id=user_id).email],
                 filename='notify_customer', value_map=value_map
             )
 
-        if update == OrderStatus.picked.name:
+        if update.get('update') == OrderStatus.picked.name:
             for i in range(len(order_data_list)):
                 order = FoodRepo.get_order_details(order_data_list[i])
                 data = {
@@ -254,12 +254,12 @@ class FoodData:
                 receiver=[UserRepo.get_user_details(user_id=user_id).email],
                 filename='picked_notification', value_map=value_map
             )
-        if update == OrderStatus.delivered.name:
+        if update.get('update')  == OrderStatus.delivered.name:
             for i in range(len(order_data_list)):
                 order = FoodRepo.get_order_details(order_data_list[i])
                 data = {
                     'order_status': OrderStatus.delivered.name,
-                    'deliery_time': datetime.now(),
+                    'delivery_time': datetime.now(),
                     'is_delivered': True
                 }
                 order_update = FoodRepo.update_order_details(data, order.order_id)
