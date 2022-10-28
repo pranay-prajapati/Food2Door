@@ -82,7 +82,6 @@ class FoodRepo:
         order_data = Order.query.filter_by(order_id=order_id).first()
         return order_data
 
-
     @staticmethod
     def update_cart_details(cart_id):
         cart_update = Cart.query.filter_by(cart_id=cart_id).update({'is_ordered': True})
@@ -103,7 +102,7 @@ class FoodRepo:
         # return bool(order_update)
 
     @staticmethod
-    def update_order_details(data,order_id=None):
+    def update_order_details(data, order_id=None):
         order_data = Order.query.filter_by(order_id=order_id).update(data)
         db_session.commit()
         return bool(order_data)

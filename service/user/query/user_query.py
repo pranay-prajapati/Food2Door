@@ -1,5 +1,8 @@
 from sqlalchemy import and_, or_
 
+from models.common_models import OrderStatus
+from models.food_management import Menu
+from models.payment_management import Order
 from models.user_model import User, Restaurant, DeliveryAgent
 from database.db_models import handler
 
@@ -26,11 +29,11 @@ class UserRepo:
     def get_agent_details(aadhar_card_number):
         agent = DeliveryAgent.query.filter_by(aadhar_card_number=aadhar_card_number).first()
         return agent
+
     @staticmethod
     def get_agent_details_by_id(agent_id):
         agent = DeliveryAgent.query.filter_by(agent_id=agent_id).first()
         return agent
-
 
     @staticmethod
     def update_by(email, data):
@@ -80,6 +83,21 @@ class UserRepo:
 
         db_session.commit()
         db_session.flush()
+
+    @staticmethod
+    def get_restaurant_order_details(restaurant_id=None,agent_id=None):
+        if restaurant_id:
+            data = Order.query.join(Menu, Menu.menu_id == Order.menu_id_fk).join(
+                Restaurant, Restaurant.restaurant_id == Menu.restaurant_id_fk
+            ).filter(Restaurant.restaurant_id == restaurant_id).all()
+        if agent_id:
+            data = Order.query.filter_by(agent_id_fk=agent_id, order_status=OrderStatus.delivered.name).all()
+        return data
+
+    @staticmethod
+    def get_menu_details_by_id(menu_id):
+        data = Menu.query.filter_by(menu_id=menu_id).first()
+        return data
 
     @staticmethod
     def get_available_delivery_agent_by_location(restaurant_location):

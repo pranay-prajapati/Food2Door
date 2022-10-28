@@ -218,12 +218,56 @@ class DeliveryAgent:
         user = get_current_user_id()
         pass
 
+    @staticmethod
+    def show_total_delivered_orders(agent_id):
+        order_list = list()
+        agent_data = UserRepo.get_restaurant_order_details(agent_id=agent_id)
+        for i in range(len(agent_data)):
+            menu_id = agent_data[i].menu_id_fk
+            menu_data = UserRepo.get_menu_details_by_id(menu_id)
+            data = {
+                "dish_name": menu_data.dish_name,
+                "order_quantity": agent_data[i].quantity,
+                "status": agent_data[i].order_status.value
+            }
+            order_list.append(data)
+        return jsonify(
+            {
+                "code": constant.SUCCESS_CODE,
+                "data": order_list,
+                "message": "Delivery agent order details fetched successfully"}
+        )
+
+
 class RestaurantOwner:
 
     @staticmethod
     def order_data():
         user = get_current_user_id()
         pass
+
+    @staticmethod
+    def show_order_restaurant(restaurant_id):
+        order_data = list()
+        user_data = UserRepo.get_user_details(user_id=get_current_user_id())
+        if user_data.is_owner:
+            restaurant_order_details = UserRepo.get_restaurant_order_details(restaurant_id)
+            for i in range(len(restaurant_order_details)):
+                menu_id = restaurant_order_details[i].menu_id_fk
+                menu_data = UserRepo.get_menu_details_by_id(menu_id)
+                data = {
+                    "dish_name": menu_data.dish_name,
+                    "order_quantity": restaurant_order_details[i].quantity,
+                    "status": restaurant_order_details[i].order_status
+                }
+                order_data.append(data)
+        return jsonify({
+            "data": order_data,
+            "code": constant.SUCCESS_CODE,
+            "message": "Details updated successfully"
+        })
+
+
 
 
 class MFA:
