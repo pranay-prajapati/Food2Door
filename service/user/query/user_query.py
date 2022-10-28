@@ -85,7 +85,7 @@ class UserRepo:
         db_session.flush()
 
     @staticmethod
-    def get_restaurant_order_details(restaurant_id=None,agent_id=None):
+    def get_restaurant_order_details(restaurant_id=None, agent_id=None):
         if restaurant_id:
             data = Order.query.join(Menu, Menu.menu_id == Order.menu_id_fk).join(
                 Restaurant, Restaurant.restaurant_id == Menu.restaurant_id_fk
@@ -123,3 +123,8 @@ class UserRepo:
         # ).filter(DeliveryAgent.is_available == True,
         #          Restaurant.restaurant_city == restaurant_location)
         return agent2
+
+    @staticmethod
+    def get_user_order_details(user_id):
+        data = Order.query.filter_by(user_id_fk=user_id).all()
+        return data

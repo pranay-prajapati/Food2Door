@@ -210,6 +210,27 @@ class UserData:
             "message": "Details updated successfully"
         })
 
+    @staticmethod
+    def show_user_order(user_id):
+        user_list = list()
+        user_order_data = UserRepo.get_user_order_details(user_id)
+        for i in range(len(user_order_data)):
+            menu_id = user_order_data[i].menu_id_fk
+            menu_data = UserRepo.get_menu_details_by_id(menu_id)
+            data = {
+                "dish_name": menu_data.dish_name,
+                "order_quantity": user_order_data[i].quantity,
+                "status": user_order_data[i].order_status.value
+            }
+            user_list.append(data)
+
+        return jsonify({
+            "data": user_list,
+            "code": constant.SUCCESS_CODE,
+            "message": "Details updated successfully"
+        })
+
+
 
 class DeliveryAgent:
 
@@ -258,7 +279,7 @@ class RestaurantOwner:
                 data = {
                     "dish_name": menu_data.dish_name,
                     "order_quantity": restaurant_order_details[i].quantity,
-                    "status": restaurant_order_details[i].order_status
+                    "status": restaurant_order_details[i].order_status.value
                 }
                 order_data.append(data)
         return jsonify({
