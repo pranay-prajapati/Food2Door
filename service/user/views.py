@@ -268,8 +268,6 @@ class RestaurantOwner:
         })
 
 
-
-
 class MFA:
     @staticmethod
     def verify_mfa(form):
@@ -368,7 +366,3 @@ class Password:
         UserRepo.update_by(user_data.email, data)
 
         return jsonify(message="Password Reset Successfully")
-
-
-
-

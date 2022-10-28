@@ -78,10 +78,14 @@ def fetch_profile_details():
     response = UserData.update_details(request_data)
     return response
 
+
 @user_management_route.route("show_order/agent/<agent_id>", methods=["GET"])
+@has_permission(permissions=Roles.DELIVERY_AGENT_PERMISSION)
 def show_total_delivered_orders(agent_id):
     response = DeliveryAgent.show_total_delivered_orders(agent_id)
     return response
+
+
 @user_management_route.route("/show_order/res/<restaurant_id>", methods=["GET"])
 @has_permission(permissions=Roles.RESTAURANT_PERMISSION)
 def show_order_restaurant(restaurant_id):
