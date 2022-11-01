@@ -73,7 +73,7 @@ def get_profile_details():
 
 
 @user_management_route.route("/profile-info", methods=["PUT"])
-def fetch_profile_details():
+def update_profile_details():
     request_data = request.json
     response = UserData.update_details(request_data)
     return response
