@@ -23,11 +23,11 @@ class UserData:
 
     @staticmethod
     def user_signup(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         user_data = list()
         email = form.email.data
-        user = UserRepo.get_user_details(email)
+        user = UserRepo.get_user_details(email=email)
 
         # check if user exists
         if user:
@@ -59,7 +59,7 @@ class UserData:
         user_data.append(data)
         UserRepo.create_user(user_data)
 
-        user = UserRepo.get_user_details(data.get("email"))
+        user = UserRepo.get_user_details(email=data.get("email"))
         if data.get("is_owner"):
             role_data = RolesRepo.get_role(role_constant.RoleType.RESTAURANT_OWNER)
         elif data.get("is_delivery_agent"):
@@ -71,7 +71,7 @@ class UserData:
         data['role'] = role_data.role_name
 
         data = {key: data[key] for key in data if key not in ['password_hash', 'mfa_secret']}
-        user = UserRepo.get_user_details(email)
+        user = UserRepo.get_user_details(email=email)
         value_map = {
             'username': user.name,
         }
@@ -113,7 +113,7 @@ class UserData:
                 "mfa_code": send_mfa(mfa_secret)
             }
         }
-        user = UserRepo.get_user_details(email)
+        user = UserRepo.get_user_details(email=email)
         if user.is_owner:
             print("welcome to restaurant panel")
         if user.is_delivery_agent:
@@ -148,6 +148,8 @@ class UserData:
             'restaurant_address': form.restaurant_address.data,
             'restaurant_contact': form.restaurant_contact.data,
             'restaurant_email': restaurant_email,
+            'restaurant_state': form.restaurant_state.data,
+            'restaurant_city': form.restaurant_city.data,
             'fssai_number': fssai_number,
             'gst_number': form.gst_number.data,
             'establishment_type': form.establishment_type.data,
@@ -161,8 +163,8 @@ class UserData:
 
     @staticmethod
     def delivery_agent(form):
-        if not form.validate_on_submit():
-            raise HttpException(INVALID_FORM_MESSAGE, 400)
+        # if not form.validate_on_submit():
+        #     raise HttpException(INVALID_FORM_MESSAGE, 400)
         agent_data = list()
         aadhar_card_number = form.aadhar_card_number.data
 
@@ -178,6 +180,7 @@ class UserData:
             'aadhar_card_number': aadhar_card_number,
             'vehicle_number': form.vehicle_number.data,
             'job_type': form.job_type.data,
+            'user_id_fk': get_current_user_id()
         }
         agent_data.append(data)
         UserRepo.create_user(agent_data, is_delivery_agent=True)
@@ -207,6 +210,26 @@ class UserData:
             "message": "Details updated successfully"
         })
 
+    @staticmethod
+    def show_user_order(user_id):
+        user_list = list()
+        user_order_data = UserRepo.get_user_order_details(user_id)
+        for i in range(len(user_order_data)):
+            menu_id = user_order_data[i].menu_id_fk
+            menu_data = UserRepo.get_menu_details_by_id(menu_id)
+            data = {
+                "dish_name": menu_data.dish_name,
+                "order_quantity": user_order_data[i].quantity,
+                "status": user_order_data[i].order_status.value
+            }
+            user_list.append(data)
+
+        return jsonify({
+            "data": user_list,
+            "code": constant.SUCCESS_CODE,
+            "message": "Details updated successfully"
+        })
+
 
 class DeliveryAgent:
 
@@ -215,12 +238,54 @@ class DeliveryAgent:
         user = get_current_user_id()
         pass
 
+    @staticmethod
+    def show_total_delivered_orders(agent_id):
+        order_list = list()
+        agent_data = UserRepo.get_restaurant_order_details(agent_id=agent_id)
+        for i in range(len(agent_data)):
+            menu_id = agent_data[i].menu_id_fk
+            menu_data = UserRepo.get_menu_details_by_id(menu_id)
+            data = {
+                "dish_name": menu_data.dish_name,
+                "order_quantity": agent_data[i].quantity,
+                "status": agent_data[i].order_status.value
+            }
+            order_list.append(data)
+        return jsonify(
+            {
+                "code": constant.SUCCESS_CODE,
+                "data": order_list,
+                "message": "Delivery agent order details fetched successfully"}
+        )
+
+
 class RestaurantOwner:
 
     @staticmethod
     def order_data():
         user = get_current_user_id()
         pass
+
+    @staticmethod
+    def show_order_restaurant(restaurant_id):
+        order_data = list()
+        user_data = UserRepo.get_user_details(user_id=get_current_user_id())
+        if user_data.is_owner:
+            restaurant_order_details = UserRepo.get_restaurant_order_details(restaurant_id)
+            for i in range(len(restaurant_order_details)):
+                menu_id = restaurant_order_details[i].menu_id_fk
+                menu_data = UserRepo.get_menu_details_by_id(menu_id)
+                data = {
+                    "dish_name": menu_data.dish_name,
+                    "order_quantity": restaurant_order_details[i].quantity,
+                    "status": restaurant_order_details[i].order_status.value
+                }
+                order_data.append(data)
+        return jsonify({
+            "data": order_data,
+            "code": constant.SUCCESS_CODE,
+            "message": "Details updated successfully"
+        })
 
 
 class MFA:
@@ -321,7 +386,3 @@ class Password:
         UserRepo.update_by(user_data.email, data)
 
         return jsonify(message="Password Reset Successfully")
-
-
-
-

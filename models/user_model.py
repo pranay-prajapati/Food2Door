@@ -14,11 +14,11 @@ from sqlalchemy.sql import expression
 from database.db_models import handler
 from models.common_models import DatetimeMixin, VehicleType, JobType, EstablishmentType, OutletType
 
-USER_ID = "user.user_id"
+USER_ID = "tbl_user.user_id"
 
 
 class User(DatetimeMixin, handler.Base):
-    __tablename__ = 'user'
+    __tablename__ = 'tbl_user'
     user_id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     contact_number = Column(String(10), nullable=False)
@@ -101,6 +101,7 @@ class DeliveryAgent(DatetimeMixin, handler.Base):
     aadhar_card_number = Column(String(16), unique=True, nullable=False)
     vehicle_number = Column(String(12), nullable=False)
     job_type = Column(Enum(JobType))
+    is_available = Column(Boolean, server_default=expression.true())
 
     def __repr__(self):
         return '<DeliveryAgent %r>' % self.user_id_fk
@@ -113,7 +114,8 @@ class DeliveryAgent(DatetimeMixin, handler.Base):
             'driving_licence_number': self.driving_licence_number,
             'aadhar_card_number': self.aadhar_card_number,
             'vehicle_number': self.vehicle_number,
-            'job_type': self.job_type
+            'job_type': self.job_type,
+            'is_available': self.is_available
         }
 
 
@@ -125,6 +127,8 @@ class Restaurant(DatetimeMixin, handler.Base):
     restaurant_address = Column(String(50), nullable=False)
     restaurant_contact = Column(String(10), nullable=False)
     restaurant_email = Column(String(120), unique=True, nullable=False)
+    restaurant_state = Column(String(64), nullable=False)
+    restaurant_city = Column(String(64), nullable=False)
     fssai_number = Column(String(14), nullable=False)
     gst_number = Column(String(24), nullable=False)
     establishment_type = Column(Enum(EstablishmentType))

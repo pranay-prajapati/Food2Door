@@ -5,7 +5,7 @@ from sqlalchemy import (
     String,
     ForeignKey,
     Enum,
-    DateTime
+    DateTime, Float
 )
 from models.common_models import DatetimeMixin, OrderStatus, PaymentMode
 from database.db_models import handler
@@ -19,12 +19,16 @@ class Order(DatetimeMixin, handler.Base):
         Integer, primary_key=True, unique=True, autoincrement=True
     )
     agent_id_fk = Column(Integer, ForeignKey("delivery_agent.agent_id"))
-    user_id_fk = Column(Integer, ForeignKey("user.user_id"))
+    user_id_fk = Column(Integer, ForeignKey("tbl_user.user_id"))
     menu_id_fk = Column(Integer, ForeignKey("menu.menu_id"))
     order_status = Column(Enum(OrderStatus))
     pickup_time = Column(DateTime)
     delivery_time = Column(DateTime)
     quantity = Column(String(64))
+    price = Column(Float, nullable=False)
+    # is_ordered = Column(Boolean, server_default=expression.false())
+    is_accepted = Column(Boolean, server_default=expression.false())
+    is_picked = Column(Boolean, server_default=expression.false())
     is_delivered = Column(Boolean, server_default=expression.false())
 
     # menu = relationship("Menu")

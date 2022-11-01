@@ -5,7 +5,7 @@ from common.role_constant import Roles
 from common.session import get_current_user_id
 from service.forms.user_management_forms import SignupForm, LoginForm, OwnerSignupForm, AgentSignupForm, VerifyCodeForm, \
     ResetPasswordForm
-from service.user.views import UserData, MFA, Password
+from service.user.views import UserData, MFA, Password, RestaurantOwner, DeliveryAgent
 
 user_management_route = Blueprint("user_management_route", __name__)
 
@@ -76,4 +76,25 @@ def get_profile_details():
 def fetch_profile_details():
     request_data = request.json
     response = UserData.update_details(request_data)
+    return response
+
+
+@user_management_route.route("agent/show_order/<agent_id>", methods=["GET"])
+@has_permission(permissions=Roles.DELIVERY_AGENT_PERMISSION)
+def show_total_delivered_orders(agent_id):
+    response = DeliveryAgent.show_total_delivered_orders(agent_id)
+    return response
+
+
+@user_management_route.route("/res/show_order/<restaurant_id>", methods=["GET"])
+@has_permission(permissions=Roles.RESTAURANT_PERMISSION)
+def show_order_restaurant(restaurant_id):
+    response = RestaurantOwner.show_order_restaurant(restaurant_id)
+    return response
+
+@user_management_route.route("/user/show_order/", methods=["GET"])
+@has_permission(permissions=Roles.USER_PERMISSION)
+def show_user_order():
+    user_id = get_current_user_id()
+    response = UserData.show_user_order(user_id)
     return response

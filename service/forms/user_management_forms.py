@@ -27,6 +27,8 @@ class OwnerSignupForm(EmailForm):
     restaurant_name = StringField(validators=[DataRequired()])
     restaurant_address = StringField(validators=[DataRequired()])
     restaurant_contact = StringField(validators=[DataRequired()])
+    restaurant_state = StringField(validators=[DataRequired()])
+    restaurant_city = StringField(validators=[DataRequired()])
     fssai_number = StringField(validators=[DataRequired()])
     gst_number = StringField(validators=[DataRequired()])
     establishment_type = StringField(validators=[DataRequired()])
