@@ -231,7 +231,6 @@ class UserData:
         })
 
 
-
 class DeliveryAgent:
 
     @staticmethod
