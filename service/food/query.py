@@ -25,7 +25,7 @@ class FoodRepo:
 
     @staticmethod
     def show_restaurant(location):
-        res_data = Restaurant.query.filter_by(restaurant_city=location).all()
+        res_data = Restaurant.query.filter_by(restaurant_city=location, is_deleted=False).all()
         return res_data
 
     @staticmethod
