@@ -134,6 +134,7 @@ class Restaurant(DatetimeMixin, handler.Base):
     establishment_type = Column(Enum(EstablishmentType))
     outlet_type = Column(Enum(OutletType))
     is_closed = Column(Boolean, server_default=expression.false())
+    is_deleted = Column(Boolean, server_default=expression.false())
 
     # need to be added
     # cuisine_type = Column(Enum(EstablishmentType))
@@ -154,4 +155,5 @@ class Restaurant(DatetimeMixin, handler.Base):
             'gst_number': self.gst_number,
             'establishment_type': self.establishment_type,
             'outlet_type': self.outlet_type,
+            'is_deleted': self.is_deleted
         }
