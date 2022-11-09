@@ -57,8 +57,13 @@ def agent_order_acceptance(restaurant_id, menu_id, cart_id, agent_id, order_id):
     response = FoodData.agent_order_acceptance(restaurant_id, cart_id, menu_id, agent_id, order_id, update)
     return response
 
-# @food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/user/<cart_id>/<agent_id>",
-#                              methods=["POST"])
-
+@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/<agent_id>/<order_id>/rating",
+                             methods=["POST"])
+def agent_rating(restaurant_id, menu_id, agent_id, order_id):
+    data = request.json if request.json else None
+    response = FoodData.agent_rating(restaurant_id, menu_id, agent_id, order_id,data)
+    return response
+# @food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/user/<cart_id>/<agent_id>/<order_id>",
+#                              methods=["POST"]):
 
 

@@ -4,6 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 from database.db_config import DatabaseConfig
+from flask import Flask
+from flask_mongoengine import MongoEngine
+
+app = Flask(__name__)
 
 
 class PostgresHandler:
@@ -102,3 +106,40 @@ def db_has_table(table):
             continue
         has_table = True
     return has_table
+
+
+class MongoDBHandler:
+
+    def __init__(
+            self,
+            host,
+            port=DatabaseConfig.mongodb_port,
+            database_name="",
+            pool_size=DatabaseConfig.pool_size,
+    ):
+        self.host = host
+        self.port = int(port)
+        self.database_name = database_name
+        self.pool_size = int(pool_size)
+        self.url = None
+        self._validate_credentials()
+        # self._create_engine()
+
+    def _validate_credentials(self):
+        if self.host is None:
+            raise ValueError("No host specified for MongoDB")
+        if self.database_name is None or self.database_name == "":
+            raise ValueError("No db specified for MongoDB")
+
+    def initialize_db(self):
+        MONGODB_SETTINGS = app.config['MONGODB_SETTINGS'] = {
+            'db': DatabaseConfig.mongodb_name,
+            'host': 'localhost',
+            'port': DatabaseConfig.mongodb_port
+        }
+        db = MongoEngine()
+        db.init_app(app)
+
+    # def initialize_db(self):
+    #     db = MongoEngine()
+    #     db.init_app(app)
