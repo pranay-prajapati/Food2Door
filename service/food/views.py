@@ -5,7 +5,9 @@ from email_service.email_config import SimpleMailProvider
 from exception.http_exception import HttpException
 from common.constant import INVALID_FORM_MESSAGE
 from common.session import get_current_user_id
+from common import constant
 from models.common_models import OrderStatus
+from models.food_management import DeliveryAgentReview,RestaurantReview
 from service.food.query import FoodRepo
 from service.user.query.user_query import UserRepo
 import email_service.utility.utils
@@ -343,3 +345,69 @@ class FoodData:
         return jsonify({
             "message": "sent successfully"
         })
+
+    @staticmethod
+    def agent_rating(restaurant_id, menu_id, agent_id, order_id,data):
+        if not data:
+            raise HttpException(constant.BAD_REQUEST)
+        restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
+        menu_data = FoodRepo.get_menu_details_by_id(menu_id)
+        agent_data = UserRepo.get_agent_details_by_id(agent_id)
+        agent_name = UserRepo.get_user_details(user_id = agent_data.user_id_fk).name
+        user_id = get_current_user_id()
+        user_data = UserRepo.get_user_details(user_id= user_id)
+        order_data = FoodRepo.get_order_details(order_id)
+
+        data = {
+            'user_id': get_current_user_id(),
+            'customer_name': user_data.name,
+            'agent_id': agent_data.agent_id,
+            'agent_name': agent_name,
+            'rating' : data.get('rating'),
+            'review': data.get('review'),
+            'order_status': order_data.status,
+            'dish_name': menu_data[0].dish_name,
+            'restaurant_name': restaurant_data.restaurant_name
+        }
+
+        DeliveryAgentReview(**data).save()
+
+        return jsonify(
+            {
+                "message":"Review added successfully",
+                "data": data
+
+            }
+        )
+
+    @staticmethod
+    def restaurant_rating(restaurant_id, menu_id,agent_id,order_id,data):
+        if not data:
+            raise HttpException(constant.BAD_REQUEST)
+        restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
+        menu_data = FoodRepo.get_menu_details_by_id(menu_id)
+        agent_data = UserRepo.get_agent_details_by_id(agent_id)
+        agent_name = UserRepo.get_user_details(user_id=agent_data.user_id_fk).name
+        user_id = get_current_user_id()
+
+
+        data = {
+            'user_id': user_id,
+            'rating': data.get('rating'),
+            'review': data.get('review'),
+            'dish_name': menu_data[0].dish_name,
+            'restaurant_name': restaurant_data.restaurant_name,
+            'price': menu_data[0].price,
+            'delivered_by': agent_name
+
+
+
+        }
+        RestaurantReview(**data).save()
+        return jsonify(
+            {
+                "message": "Review added successfully",
+                "data": data
+
+            }
+        )

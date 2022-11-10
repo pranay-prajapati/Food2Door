@@ -13,6 +13,8 @@ class DatabaseConfig:
     database_name = os.environ.get('PG_NAME')
     charset = os.environ.get("PG_CHARSET", "utf8")
     pool_size = os.environ.get("PG_POOLSIZE", 5)
+    mongodb_name = os.environ.get('MONGODB_NAME')
+    mongodb_port = os.environ.get('MONGODB_PORT', 27017)
 
     if not host:
         print(f"Database Host is not found")
@@ -20,13 +22,3 @@ class DatabaseConfig:
         print(f"Database User is not found")
     if not password:
         print(f"Database Password is not found")
-
-
-# basedir = os.path.abspath(os.path.dirname(__file__))
-#
-# app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = \
-#     f'postgresql://{username}:{password}@{host}:{port}/{database_name}' + os.path.join(basedir, 'database.db')
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#
-# db = SQLAlchemy(app)

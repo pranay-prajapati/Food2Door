@@ -9,6 +9,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.sql import expression
 from database.db_models import handler
+import mongoengine as db
 
 
 class Menu(handler.Base):
@@ -66,4 +67,60 @@ class Cart(handler.Base):
             'ingredients': self.ingredients,
             'is_ordered': self.is_ordered
 
+        }
+
+
+class RestaurantReview(db.Document):
+    """
+        MongoDB Data Model
+    """
+    _id = db.SequenceField(primary_key=True)
+    user_id = db.IntField()
+    rating = db.IntField()
+    review = db.StringField()
+    dish_name = db.StringField()
+    restaurant_name = db.StringField()
+    price = db.FloatField()
+    delivered_by = db.StringField()
+
+    def to_json(self):
+        return {
+            '_id': self._id,
+            'user_id': self.user_id,
+            'rating': self.rating,
+            'review': self.review,
+            'dish_name': self.dish_name,
+            'restaurant_name': self.restaurant_name,
+            'price': self.price,
+            'delivered_by': self.delivered_by,
+        }
+
+
+class DeliveryAgentReview(db.Document):
+    """
+        MongoDB Data Model
+    """
+    _id = db.SequenceField(primary_key=True)
+    user_id = db.IntField()
+    customer_name = db.StringField()
+    agent_id = db.IntField()
+    agent_name = db.StringField()
+    rating = db.IntField()
+    review = db.StringField()
+    order_status = db.StringField()
+    dish_name = db.StringField()
+    restaurant_name = db.StringField()
+
+    def to_json(self):
+        return {
+            '_id': self._id,
+            'user_id': self.user_id,
+            'customer_name': self.customer_name,
+            'agent_id': self.agent_id,
+            'agent_name': self.agent_name,
+            'rating': self.rating,
+            'review': self.review,
+            'order_status': self.order_status,
+            'dish_name': self.dish_name,
+            'restaurant_name': self.restaurant_name,
         }
