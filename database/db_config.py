@@ -13,7 +13,7 @@ class DatabaseConfig:
     database_name = os.environ.get('PG_NAME')
     charset = os.environ.get("PG_CHARSET", "utf8")
     pool_size = os.environ.get("PG_POOLSIZE", 5)
-    mongodb_name = os.environ.get('MONGODB_NAME',"FD")
+    mongodb_name = os.environ.get('MONGODB_NAME')
     mongodb_port = os.environ.get('MONGODB_PORT', 27017)
 
     if not host:
