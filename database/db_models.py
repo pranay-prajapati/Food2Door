@@ -1,5 +1,5 @@
 from database.db_config import DatabaseConfig
-from database.db_creator import PostgresHandler, MongoDBHandler
+from database.db_creator import PostgresHandler
 from flask import Flask
 from flask_mongoengine import MongoEngine
 
