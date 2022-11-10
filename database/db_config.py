@@ -22,13 +22,3 @@ class DatabaseConfig:
         print(f"Database User is not found")
     if not password:
         print(f"Database Password is not found")
-
-
-# basedir = os.path.abspath(os.path.dirname(__file__))
-#
-# app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = \
-#     f'postgresql://{username}:{password}@{host}:{port}/{database_name}' + os.path.join(basedir, 'database.db')
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#
-# db = SQLAlchemy(app)

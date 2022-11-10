@@ -16,15 +16,6 @@ handler = PostgresHandler(
 )
 
 
-# mongo_handler = MongoDBHandler(
-#     DatabaseConfig.host,
-#     DatabaseConfig.mongodb_port,
-#     DatabaseConfig.mongodb_name,
-#     DatabaseConfig.pool_size
-#
-# )
-
-
 def create_model():
     print("Initializing.....")
     handler.initialize_db()
@@ -39,6 +30,4 @@ def create_model():
     from models.user_model import User
     from models.food_management import RestaurantReview, DeliveryAgentReview
     from models import payment_management, food_management
-    # RestaurantReview.save(RestaurantReviewCon.data)
-    # DeliveryAgentReview.save()
     handler.Base.metadata.create_all(bind=handler.engine)
