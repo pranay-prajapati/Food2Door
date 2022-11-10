@@ -43,27 +43,34 @@ def restaurant_order_assignment(restaurant_id, menu_id, cart_id):
     return response
 
 
-@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/agent/<cart_id>", methods=["POST"])
+@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/agent/<cart_id>",
+                             methods=["POST"])
 def agent_order_assignment(restaurant_id, menu_id, cart_id):
     response = FoodData.agent_order_assignment(restaurant_id, cart_id, menu_id)
-    return response\
-
-
-@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/user/<cart_id>/<agent_id>/<order_id>",
-                             methods=["POST"])
+    return response \
+ \
+ \
+@food_management_route.route(
+    "/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/user/<cart_id>/<agent_id>/<order_id>",
+    methods=["POST"])
 def agent_order_acceptance(restaurant_id, menu_id, cart_id, agent_id, order_id):
     update = request.json if request.json else None
 
     response = FoodData.agent_order_acceptance(restaurant_id, cart_id, menu_id, agent_id, order_id, update)
     return response
 
-@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/<agent_id>/<order_id>/rating",
+
+@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/<agent_id>/<order_id>/agent_rating",
                              methods=["POST"])
 def agent_rating(restaurant_id, menu_id, agent_id, order_id):
     data = request.json if request.json else None
-    response = FoodData.agent_rating(restaurant_id, menu_id, agent_id, order_id,data)
+    response = FoodData.agent_rating(restaurant_id, menu_id, agent_id, order_id, data)
     return response
-# @food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/cart/user/<cart_id>/<agent_id>/<order_id>",
-#                              methods=["POST"]):
 
 
+@food_management_route.route("/show-restaurant/<restaurant_id>/show-menu/<menu_id>/<agent_id>/<order_id>/restaurant_rating",
+                             methods=["POST"])
+def restaurant_rating(restaurant_id, menu_id, agent_id, order_id):
+    data = request.json if request.json else None
+    response = FoodData.restaurant_rating(restaurant_id, menu_id, agent_id, order_id, data)
+    return response

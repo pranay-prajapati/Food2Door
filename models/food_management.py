@@ -80,6 +80,8 @@ class RestaurantReview(db.Document):
     review = db.StringField()
     dish_name = db.StringField()
     restaurant_name = db.StringField()
+    price = db.FloatField()
+    delivered_by = db.StringField()
 
     def to_json(self):
         return {
@@ -89,6 +91,8 @@ class RestaurantReview(db.Document):
             'review': self.review,
             'dish_name': self.dish_name,
             'restaurant_name': self.restaurant_name,
+            'price': self.price,
+            'delivered_by': self.delivered_by,
         }
 
 
@@ -103,6 +107,7 @@ class DeliveryAgentReview(db.Document):
     agent_name = db.StringField()
     rating = db.IntField()
     review = db.StringField()
+    order_status = db.StringField()
     dish_name = db.StringField()
     restaurant_name = db.StringField()
 
@@ -115,6 +120,7 @@ class DeliveryAgentReview(db.Document):
             'agent_name': self.agent_name,
             'rating': self.rating,
             'review': self.review,
+            'order_status': self.order_status,
             'dish_name': self.dish_name,
             'restaurant_name': self.restaurant_name,
         }

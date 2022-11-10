@@ -365,6 +365,7 @@ class FoodData:
             'agent_name': agent_name,
             'rating' : data.get('rating'),
             'review': data.get('review'),
+            'order_status': order_data.status,
             'dish_name': menu_data[0].dish_name,
             'restaurant_name': restaurant_data.restaurant_name
         }
@@ -374,6 +375,38 @@ class FoodData:
         return jsonify(
             {
                 "message":"Review added successfully",
+                "data": data
+
+            }
+        )
+
+    @staticmethod
+    def restaurant_rating(restaurant_id, menu_id,agent_id,order_id,data):
+        if not data:
+            raise HttpException(constant.BAD_REQUEST)
+        restaurant_data = FoodRepo.get_restaurant_by_id(restaurant_id)
+        menu_data = FoodRepo.get_menu_details_by_id(menu_id)
+        agent_data = UserRepo.get_agent_details_by_id(agent_id)
+        agent_name = UserRepo.get_user_details(user_id=agent_data.user_id_fk).name
+        user_id = get_current_user_id()
+
+
+        data = {
+            'user_id': user_id,
+            'rating': data.get('rating'),
+            'review': data.get('review'),
+            'dish_name': menu_data[0].dish_name,
+            'restaurant_name': restaurant_data.restaurant_name,
+            'price': menu_data[0].price,
+            'delivered_by': agent_name
+
+
+
+        }
+        RestaurantReview(**data).save()
+        return jsonify(
+            {
+                "message": "Review added successfully",
                 "data": data
 
             }
