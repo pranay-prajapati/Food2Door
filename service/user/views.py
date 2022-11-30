@@ -2,6 +2,7 @@ import datetime
 import pyotp
 
 import email_service.utility.utils
+from common.rabbitmq_services import RabbitMQService
 from query.role_query import RolesRepo
 from common.constant import INVALID_FORM_MESSAGE, USER_ALREADY_EXIST
 from common.mfa_secret import decrypt_mfa_secret, send_mfa, encrypt_mfa_secret
@@ -17,6 +18,8 @@ from email_service.email_config import SimpleMailProvider
 
 app = Flask(__name__)
 app.config["WTF_CSRF_ENABLED"] = False
+
+queue_service = RabbitMQService()
 
 
 class UserData:
@@ -89,6 +92,20 @@ class UserData:
              })
 
     @staticmethod
+    def send_mfa_mail(email, username, subject, mfa_code):
+        body = {
+            "email": email,
+            "type": "mfa_code_email",
+            "value_map": {
+                "username": username,
+                "subject": subject,
+                "mfa_code": mfa_code,
+            },
+        }
+        queue_service.send_email_notification(body=body)
+        return mfa_code
+
+    @staticmethod
     def user_login(form):
         if not form.validate_on_submit():
             raise HttpException(INVALID_FORM_MESSAGE, 400)
@@ -118,15 +135,20 @@ class UserData:
             print("welcome to restaurant panel")
         if user.is_delivery_agent:
             print("welcome to delivery panel")
-        value_map = {
-            'username': user.name,
-            'mfa_code': send_mfa(mfa_secret)
-        }
-        SimpleMailProvider.send_mail(
+        # value_map = {
+        #     'username': user.name,
+        #     'mfa_code': send_mfa(mfa_secret)
+        # }
+        # SimpleMailProvider.send_mail(
+        #     subject=email_service.utility.utils.SUBJECT_MAP.get('mfa_code'),
+        #     receiver=[user.email],
+        #     filename='mfa_code_email', value_map=value_map
+        # )
+        UserData.send_mfa_mail(
+            email=email,
+            username=user.name,
             subject=email_service.utility.utils.SUBJECT_MAP.get('mfa_code'),
-            receiver=[user.email],
-            filename='mfa_code_email', value_map=value_map
-        )
+            mfa_code=send_mfa(mfa_secret))
         return {'message': 'login success', 'token': response_payload}
 
     @staticmethod

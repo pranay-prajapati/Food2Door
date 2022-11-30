@@ -1,3 +1,7 @@
+from time import sleep
+import pika
+from common.rabbitmq_config import RabbitmqConfig
+
 TEMPLATE_MAP = {
     'test_email': 'test_email.html',
     'welcome_email': 'welcome_user.html',
@@ -33,3 +37,25 @@ def get_template_path(request_type: str):
         print(f'No Templated is found for type : {request_type}')
     template_path = TEMPLATE_MAP.get(request_type)
     return template_path
+
+
+def connect_to_rabbitmq():
+    host = RabbitmqConfig.host
+    port = RabbitmqConfig.port
+    attempts = RabbitmqConfig.attempts
+    delay = RabbitmqConfig.retry_delay_sec
+
+    print(f"Connecting to rabbitmq server on {host}:{port}")
+    for i in range(attempts):
+        try:
+            print(f" - attempt #{i}")
+            connection = pika.BlockingConnection(
+                pika.ConnectionParameters(host=host, port=port)
+            )
+            print(" - connected.")
+            return connection
+        except Exception as exc:
+            print(f" - connection attempt failed: {exc}.\n"
+                  "   waiting for {delay} seconds...")
+            sleep(delay)
+    raise RuntimeError(f"No RabbitMQ server found on {host}:{port}.")

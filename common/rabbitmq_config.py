@@ -1,6 +1,8 @@
 from enum import Enum
 from os import getenv
 
+DEFAULT_EXCHANGE = ''
+
 
 class Queues(Enum):
     EMAIL_NOTIFICATION = "email_notification"
